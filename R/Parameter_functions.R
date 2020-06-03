@@ -214,9 +214,8 @@ set_mig <- function(paramfile, site.arrange, max.dist, tot) {
 }
 
 #' @method print params
-#' @export
 
-"print.params" <- function(x) {
+print.params <- function(x) {
   cat('\n')
   cat('Number of Sites:', attr(x, 'NumSite'), '\n')
   cat('Number of Species:', attr(x, 'NumSpec'), '\n\n')
@@ -249,9 +248,9 @@ set_mig <- function(paramfile, site.arrange, max.dist, tot) {
 }
 
 #' @method is params
-#' @export
 
-"is.params" <- function(x) inherits(x, "params")
+
+is.params <- function(x) inherits(x, "params")
 
 
 
