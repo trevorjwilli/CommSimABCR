@@ -309,6 +309,8 @@ is.priors <- function(x) inherits(x, "priors")
 #' @examples
 #' priors <- make_priors(5, 5)
 #' print(priors)
+#'
+#' @export
 
 print.priors <- function(x) {
   cat('\n')
