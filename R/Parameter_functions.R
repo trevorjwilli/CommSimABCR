@@ -214,7 +214,7 @@ set_mig <- function(paramfile, site.arrange, max.dist, tot) {
 }
 
 
-### Function for S3 usage of print for params object
+#' @export
 
 print.params <- function(x) {
   cat('\n')
@@ -248,7 +248,7 @@ print.params <- function(x) {
   }
 }
 
-### Function to check if an object is a params object
+#' @export
 
 is.params <- function(x) inherits(x, "params")
 

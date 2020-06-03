@@ -292,11 +292,11 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   }
 }
 
-### Check to see if is a priors object
+#' @export
 
 is.priors <- function(x) inherits(x, "priors")
 
-### S3 Usage of print for priors object
+#' @export
 
 print.priors <- function(x) {
   cat('\n')
