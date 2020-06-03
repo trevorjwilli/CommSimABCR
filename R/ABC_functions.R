@@ -298,7 +298,17 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 is.priors <- function(x) inherits(x, "priors")
 
 
-#' @export
+#' S3 print method for priors
+#'
+#' Sets up the print methods for class priors
+#'
+#' @param x Object of class priors
+#'
+#' @return Prints out to screen
+#'
+#' @examples
+#' priors <- make_priors(5, 5)
+#' print(priors)
 
 print.priors <- function(x) {
   cat('\n')
