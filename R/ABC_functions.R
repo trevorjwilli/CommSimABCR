@@ -293,14 +293,14 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 }
 
 #' @method is priors
-#' @export is.priors
+#' @export
 
-is.priors <- function(x) inherits(x, "priors")
+"is.priors" <- function(x) inherits(x, "priors")
 
 #' @method print priors
-#' @export print.priors
+#' @export
 
-print.priors <- function(x) {
+"print.priors" <- function(x) {
   cat('\n')
   cat('Number of Sites:', attr(x, 'NumSite'), '\n')
   cat('Number of Species:', attr(x, 'NumSpec'), '\n\n')

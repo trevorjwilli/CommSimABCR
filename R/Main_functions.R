@@ -184,9 +184,9 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
 
 
 #' @method plot simrun
-#' @export plot.simrun
+#' @export
 
-plot.simrun <- function(x, lgnd = T) {
+"plot.simrun" <- function(x, lgnd = T) {
 
   clrs <- ggsci::pal_igv()(51)
 
