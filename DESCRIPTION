@@ -1,0 +1,21 @@
+Package: CommSimABC
+Title: Simulates Metacommunities Under Moran Model
+Version: 1.0.0
+Authors@R: person(given = "Trevor",
+           family = "Williams",
+           role = c("aut", "cre"),
+           email = "trevorjwilli@byu.edu")
+Description: This package runs metacommunity simulations following a modified 
+    Moran model which can then be used for model selection and parameter estimation 
+    in an Approximate Bayesian Computation (ABC) framework using the abc package. 
+    These simulation models can help researchers determine which metacommunity archetype
+    is most likely influencing metacommunity structure as well as elucidate the amount
+    and direction of dispersal between communities.  
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    bipartite,
+    ggsci,
+    vegan
+RoxygenNote: 7.0.2
