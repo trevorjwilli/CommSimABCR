@@ -184,7 +184,7 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
 
 
 #' @method plot simrun
-#' @exportMethod plot.simrun
+#' @export plot.simrun
 
 plot.simrun <- function(x, lgnd = T) {
 

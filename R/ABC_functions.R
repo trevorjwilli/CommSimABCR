@@ -293,12 +293,12 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 }
 
 #' @method is priors
-#' @exportMethod is.priors
+#' @export is.priors
 
 is.priors <- function(x) inherits(x, "priors")
 
 #' @method print priors
-#' @exportMethod print.priors
+#' @export print.priors
 
 print.priors <- function(x) {
   cat('\n')
