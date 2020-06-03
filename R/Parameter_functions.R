@@ -213,7 +213,6 @@ set_mig <- function(paramfile, site.arrange, max.dist, tot) {
   return(mig.out)
 }
 
-#' @method print params
 #' @export
 
 print.params <- function(x) {
@@ -248,9 +247,7 @@ print.params <- function(x) {
   }
 }
 
-#' @method is params
 #' @export
-
 
 is.params <- function(x) inherits(x, "params")
 
