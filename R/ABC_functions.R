@@ -292,14 +292,26 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   }
 }
 
-
+#' Check if object is priors class
+#'
+#' Checks to see if an object is of class priors
+#'
+#' @param x object to test
+#'
+#' @return Logical
+#'
+#' @examples
+#'
+#' test <- make_priors(5,5)
+#' is.priors(test)
+#'
 #' @export
 
 is.priors <- function(x) inherits(x, "priors")
 
 #' @export
 
-print.priors <- function(x) {
+print.priors <- function(x, ...) {
   cat('\n')
   cat('Number of Sites:', attr(x, 'NumSite'), '\n')
   cat('Number of Species:', attr(x, 'NumSpec'), '\n\n')

@@ -17,5 +17,9 @@ LazyData: true
 Imports: 
     bipartite,
     ggsci,
+    gstat,
+    mvtnorm,
+    raster,
+    sp,
     vegan
 RoxygenNote: 7.0.2
