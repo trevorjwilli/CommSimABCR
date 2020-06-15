@@ -272,6 +272,8 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 
   pb <- txtProgressBar(min = 0, max = nsims, style = 3) # Set up progress bar
 
+  out.meta <- list()
+
   for(i in 1:nsims) { # Run simulations
 
     inparam <- make_params(n.spec, n.sites) # Set params object
@@ -280,15 +282,16 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
     inparam$mig <- set_mig(inparam, site.arrange[[i]], max.dist[i], tot[i]) # Create migration matrices
 
     run <- moran_deme(x = meta[[i]], t = t, params = inparam, output = F) # Run simulation
+    out.meta[[paste0('sim',i)]] <- run$Metacommunity[[1]]
 
     setTxtProgressBar(pb, i) # Update progress bar
 
   }
 
   if(!is.matrix(J)) { # Create output (different because J could be a matrix or just a vector)
-    return(list(metacommunities = meta, selectionlist = sel, fdmat = fd, parameters = param.out))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, parameters = param.out))
   } else {
-    return(list(metacommunities = meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out))
   }
 }
 
