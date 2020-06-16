@@ -281,6 +281,8 @@ ecosumstats <- function(y) {
 #' creates a new directory and writes the contents as separate files.
 #' NOTE: only works with a single nesting. Multiple nestings will bring an
 #' error.
+#'
+#' @export
 
 
 
