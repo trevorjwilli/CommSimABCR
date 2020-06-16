@@ -267,3 +267,70 @@ ecosumstats <- function(y) {
   }
   return(out)
 }
+
+#' Write Lists to External File
+#'
+#' Takes a list and outputs the contents into multiple text files.
+#'
+#' @param x The list to be written.
+#' @param dir Character, directory to which the list will be written.
+#' @param sep Character, the separator to use for text delimitation.
+#'
+#' @details Takes the contents of a list and writes them as separate
+#' files into the chosen directory. If a list is nested inside a list,
+#' creates a new directory and writes the contents as separate files.
+#' NOTE: only works with a single nesting. Multiple nestings will bring an
+#' error.
+
+
+
+write.list <- function(x, dir, sep = "NULL") {
+
+  for(i in 1:length(x)) {
+    ###print(paste("i = ", i))
+    dex <- x[[i]]
+    #print(dex)
+
+    if(is.data.frame(dex)) {
+      ###print("dex = dataframe")
+      write.table(dex, paste0(dir, names(x)[i]), sep = sep, row.names = F)
+
+
+    } else if(is.list(dex)) {
+      dir.out <- paste0(dir, names(x)[i],"/")
+      #print(paste("Directory : ", dir.out))
+      dir.create(dir.out)
+
+      for(j in 1:length(dex)) {
+        ddex <- dex[[j]]
+        #print(paste("ddex = ", ddex))
+        if(is.matrix(ddex)) {
+          #print("ddex is a matrix")
+          write.table(ddex, paste0(dir.out, names(dex)[j]), sep = ",", col.names = T, row.names = F)
+
+        } else if(is.data.frame(ddex)) {
+          #print("ddex is a dataframe")
+          write.table(ddex, paste0(dir.out, names(ddex)[j]), sep = sep, row.names = F)
+
+        } else {
+          ###print("ddex is else")
+          write(ddex, paste0(dir, names(ddex)[j]))
+
+        }
+      }
+
+    } else if(is.matrix(dex)) {
+      ###print("dex = matrix")
+      write.table(dex, paste0(dir, names(x)[i]), sep = sep, col.names = T, row.names = F)
+
+    } else {
+      ###print("dex = else")
+      write(dex, paste0(dir, names(x)[i]))
+    }
+  }
+}
+
+
+
+
+
