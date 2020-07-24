@@ -214,9 +214,9 @@ ecosumstats <- function(y) {
     beta.whit <- mean(vegan::betadiver(y, method = 1))
     beta.whit.med <- median(vegan::betadiver(y, method = 1))
     beta.whit.sd <- sd(vegan::betadiver(y, method = 1))
-    beta.sor <- mean(vegan::betadiver(y, method = 2))
-    beta.sor.med <- median(vegan::betadiver(y, method = 2))
-    beta.sor.sd <- sd(vegan::betadiver(y, method = 2))
+    beta.bray <- mean(vegan::vegdist(y, method = "bray"))
+    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
+    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
     mean.c.score <- bipartite::C.score(y, normalise = T)
     median.c.score <- bipartite::C.score(y, normalise = T, FUN = median)
     v.ratio <- bipartite::V.ratio(y)
@@ -226,12 +226,12 @@ ecosumstats <- function(y) {
 
     out <- c(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
              mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness,
-             sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.sor, beta.sor.med,
-             beta.sor.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
+             sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.bray, beta.bray.med,
+             beta.bray.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
     names(out) <- c("mean.shannon", "median.shannon", "sd.shannon", "mean.simpson", "median.simpson", "sd.simpson",
                     "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness",
-                    "sd.richness", "beta.whit", "beta.whit.med", "beta.whit.sd", "beta.sor", "beta.sor.med",
-                    "beta.sor.sd", "mean.c.score", "median.c.score", "v.ratio", "mean.sites", "median.sites", "sd.sites")
+                    "sd.richness", "beta.whit", "beta.whit.med", "beta.whit.sd", "beta.bray", "beta.bray.med",
+                    "beta.bray.sd", "mean.c.score", "median.c.score", "v.ratio", "mean.sites", "median.sites", "sd.sites")
 
   } else {
 
@@ -250,9 +250,9 @@ ecosumstats <- function(y) {
     beta.whit <- sapply(y, function(x) mean(vegan::betadiver(x, method = 1)))
     beta.whit.med <- sapply(y, function(x) median(vegan::betadiver(x, method = 1)))
     beta.whit.sd <- sapply(y, function(x) sd(vegan::betadiver(x, method = 1)))
-    beta.sor <- sapply(y, function(x) mean(vegan::betadiver(x, method = 2)))
-    beta.sor.med <- sapply(y, function(x) median(vegan::betadiver(x, method = 2)))
-    beta.sor.sd <- sapply(y, function(x) sd(vegan::betadiver(x, method = 2)))
+    beta.bray <- sapply(y, function(x) mean(vegan::vegdist(x, method = "bray")))
+    beta.bray.med <- sapply(y, function(x) median(vegan::vegdist(x, method = "bray")))
+    beta.bray.sd <- sapply(y, function(x) sd(vegan::vegdist(x, method = "bray")))
     mean.c.score <- sapply(y, function(x) bipartite::C.score(x, normalise = F))
     median.c.score <- sapply(y, function(x) bipartite::C.score(x, normalise = F, FUN = median))
     v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
@@ -262,8 +262,8 @@ ecosumstats <- function(y) {
 
     out <- data.frame(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
                       mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness,
-                      sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.sor, beta.sor.med,
-                      beta.sor.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
+                      sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.bray, beta.bray.med,
+                      beta.bray.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
   }
   return(out)
 }
