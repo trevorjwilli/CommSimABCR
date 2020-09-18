@@ -289,9 +289,9 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   }
 
   if(!is.matrix(J)) { # Create output (different because J could be a matrix or just a vector)
-    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, parameters = param.out))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, parameters = param.out, input = priors))
   } else {
-    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out, input = priors))
   }
 }
 

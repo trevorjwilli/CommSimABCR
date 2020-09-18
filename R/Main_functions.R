@@ -177,7 +177,7 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
   inc <- ifelse(x>0, 1, x)
   incs[[as.character(t)]] <- inc
   metas[[as.character(t)]] <- x
-  out <- list(Metacommunity = metas, Incidence = incs, metafreq = out.mat,comfreq = comlist)
+  out <- list(Metacommunity = metas, Incidence = incs, metafreq = out.mat,comfreq = comlist, input = params)
   class(out) <- c('simrun', 'list')
   out
 }
