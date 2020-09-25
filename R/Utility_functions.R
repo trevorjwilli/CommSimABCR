@@ -431,7 +431,6 @@ embabs <- function(x) {
       }
       out
     }
-<<<<<<< HEAD
 
     ranges <- valrange(ones)
     #print(ranges)
@@ -519,95 +518,6 @@ turnover <- function(web) {
 #'
 #' @export
 
-=======
-
-    ranges <- valrange(ones)
-    #print(ranges)
-
-    multibetween <- function(x, ranges) { # Internal function to run dplyrs
-      #between on a list of ranges
-      out <- vector()
-      for(i in 1:length(ranges)) {
-        test <- dplyr::between(x, ranges[[i]][1], ranges[[i]][2])
-        out <- append(out, test)
-      }
-      out
-    }
-
-    numbet <- sapply(zeros, multibetween, ranges = ranges)
-    #print(numbet)
-    if(is.list(numbet)) {
-      numbet <- 0
-      return(list(count = numbet, indices = NULL))
-    } else if(is.matrix(numbet)) {
-      ind <- zeros[which(colSums(numbet) > 0)]
-      numbet <- sum(numbet)
-      return(list(count = numbet, indices = ind))
-    } else {
-      numbet <- sum(numbet)
-      return(list(count = numbet, indices = NULL))
-    }
-  }
-
-  x <- metacom::OrderMatrix(x)
-  #print(colSums(x))
-  inds <- vector()
-  count <- 0
-  for(i in 1:nrow(x)) {
-    #print(i)
-    zeros <- which(x[i,] == 0)
-    ones <- which(x[i,] == 1)
-    num <- countbetween(zeros, ones)
-    count <- count + num$count
-    #print(count)
-    if(num$count > 0) {
-      for(j in 1:length(num$indices)) {
-        index <- paste(i, num$indices[j])
-        inds <- append(inds, index)
-      }
-    }
-
-  }
-  #cat("Rows Done\n")
-  for(k in 1:ncol(x)) {
-    zeros <- which(x[,k] == 0)
-    ones <- which(x[,k] == 1)
-    num <- countbetween(zeros, ones)
-    #print(num)
-    if(length(num$indices) > 0) {
-      for(q in 1:length(num$indices)) {
-        index <- paste(num$indices[q], k)
-        #print(index)
-        if(index %in% inds) {
-          next
-        } else {
-          count <- count + 1
-          inds <- append(inds, index)
-        }
-      }
-    }
-  }
-  return(list(count = count, inds = inds, orderdmat = x))
-}
-
-#' turnover function copied from metacom package
-#'
-#' @export
-
-turnover <- function(web) {
-  web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
-  for (i in 1:ncol(web)) {
-    web[min(which(web[, i] == 1)):max(which(web[, i] == 1)), i] <- 1
-  }
-  D <- vegan::designdist(web, method = "(A-J)*(B-J)", terms = "minimum")
-  return(sum(D))
-}
-
-#' Boundary Clumping function (Morisitas index) copied from metacom
-#'
-#' @export
-
->>>>>>> dcfdc2c1896156e08ae427e471eec9e1ab94bb53
 morisitas <- function (comm) {
   comm <- metacom::OrderMatrix(comm, scores = 1)
   for (i in 1:ncol(comm)) {
@@ -640,4 +550,3 @@ morisitas <- function (comm) {
   M <- M * (ncol(comm) - 2)
   M
 }
-
