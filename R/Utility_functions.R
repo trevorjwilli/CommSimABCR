@@ -179,9 +179,14 @@ evenness <- function(y) {
 #' @param y Either a metacommunity matrix or a list of metacommunity matrices
 #'
 #' @details Calculates the mean, median, and standard deviations for shannon diversity index,
-#' simpson diversity index, Pielou's evenness, richness, beta diversity (whittakers and Sorensons),
-#' and the number of sites occupied for species for communities in a metacommunity matrix. It also
-#' calculats the mean and median C-score and the v-ratio.
+#' simpson diversity index, Pielou's evenness, richness, the number of sites occupied for species.
+#' It also calculates beta diversity by calculating the mean and sum of squared
+#' interpoint distances using pairwise Bray-Curtis dissimilarities (Anderson 2011),
+#' and true alpha, beta, and gamma values using Hills numbers for q = 0 through 2 Jost (2006, 2007),
+#' These values are calculated using equal weights for all values of q as well as weighted
+#' for q = 1. It also calculates the C-score (as well as skew and variance of C-score), checkerboard score,
+#' V-ratio. Lastly it calculates the number of embedded absences, Turnover, and Morisitas
+#'  index following Leibold and Mikkelson (2002).
 #'
 #' @return Either a vector of summary statistics for a single metacommunity or a dataframe where columns
 #' are different summary statistics and rows are metacommunities.
@@ -211,29 +216,50 @@ ecosumstats <- function(y) {
     mean.richness <- mean(vegan::specnumber(y))
     median.richness <- median(vegan::specnumber(y))
     sd.richness <- sd(vegan::specnumber(y))
-    beta.whit <- mean(vegan::betadiver(y, method = 1))
-    beta.whit.med <- median(vegan::betadiver(y, method = 1))
-    beta.whit.sd <- sd(vegan::betadiver(y, method = 1))
-    beta.bray <- mean(vegan::vegdist(y, method = "bray"))
-    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
-    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
-    mean.c.score <- bipartite::C.score(y, normalise = T)
-    median.c.score <- bipartite::C.score(y, normalise = T, FUN = median)
-    v.ratio <- bipartite::V.ratio(y)
     mean.sites <- mean(colSums(ifelse(y > 0, 1, 0)))
     median.sites <- median(colSums(ifelse(y > 0, 1, 0)))
     sd.sites <- sd(colSums(ifelse(y > 0, 1, 0)))
+    beta.bray <- mean(vegan::vegdist(y, method = "bray"))
+    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
+    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
+    beta.bray.ssid <- ssid2beta(y, method = "bray")
+    alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
+    beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
+    gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
+    alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
+    beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
+    gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
+    alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
+    beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
+    gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
+    alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
+    beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
+    gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    v.ratio <- bipartite::V.ratio(y)
+    coherence <- embabs(y)$count
+    turnov <- turnover(y)
+    morisit <- morisitas(y)
 
     out <- c(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
-             mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness,
-             sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.bray, beta.bray.med,
-             beta.bray.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
+             mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
+             mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
+             alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
+             alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
+             checkerscore, v.ratio, coherence, turnov, morisit)
     names(out) <- c("mean.shannon", "median.shannon", "sd.shannon", "mean.simpson", "median.simpson", "sd.simpson",
-                    "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness",
-                    "sd.richness", "beta.whit", "beta.whit.med", "beta.whit.sd", "beta.bray", "beta.bray.med",
-                    "beta.bray.sd", "mean.c.score", "median.c.score", "v.ratio", "mean.sites", "median.sites", "sd.sites")
+                    "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness", "sd.richness",
+                    "mean.sites", "median.sites", "sd.sites", "beta.bray", "beta.bray.med", "beta.bray.sd", "beta.bray.ssid",
+                    "alpha.0", "beta.0", "gamma.0", "alpha.1", "beta.1", "gamma.1", "alpha.2", "beta.2", "gamma.2",
+                    "alpha.1.weight", "beta.1.weight", "gamma.1.weight", "c.score", "c.score.skew", "c.score.var",
+                    "checkerscore", "v.ratio", "coherence", "turnov", "morisit")
 
   } else {
+
+    incs <- lapply(y, function(x) ifelse(x > 0, 1, 0))
 
     mean.shannon <- sapply(y, function(x) mean(vegan::diversity(x, index = "shannon")))
     median.shannon <- sapply(y, function(x) median(vegan::diversity(x, index = "shannon")))
@@ -247,23 +273,40 @@ ecosumstats <- function(y) {
     mean.richness <- sapply(y, function(x) mean(vegan::specnumber(x)))
     median.richness <- sapply(y, function(x) median(vegan::specnumber(x)))
     sd.richness <- sapply(y, function(x) sd(vegan::specnumber(x)))
-    beta.whit <- sapply(y, function(x) mean(vegan::betadiver(x, method = 1)))
-    beta.whit.med <- sapply(y, function(x) median(vegan::betadiver(x, method = 1)))
-    beta.whit.sd <- sapply(y, function(x) sd(vegan::betadiver(x, method = 1)))
-    beta.bray <- sapply(y, function(x) mean(vegan::vegdist(x, method = "bray")))
-    beta.bray.med <- sapply(y, function(x) median(vegan::vegdist(x, method = "bray")))
-    beta.bray.sd <- sapply(y, function(x) sd(vegan::vegdist(x, method = "bray")))
-    mean.c.score <- sapply(y, function(x) bipartite::C.score(x, normalise = F))
-    median.c.score <- sapply(y, function(x) bipartite::C.score(x, normalise = F, FUN = median))
-    v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
     mean.sites <- sapply(y, function(x) mean(colSums(ifelse(x > 0, 1, 0))))
     median.sites <- sapply(y, function(x) median(colSums(ifelse(x > 0, 1, 0))))
     sd.sites <- sapply(y, function(x) sd(colSums(ifelse(x > 0, 1, 0))))
+    beta.bray <- sapply(y, function(x) mean(vegan::vegdist(x, method = "bray")))
+    beta.bray.med <- sapply(y, function(x) median(vegan::vegdist(x, method = "bray")))
+    beta.bray.sd <- sapply(y, function(x) sd(vegan::vegdist(x, method = "bray")))
+    beta.bray.ssid <- sapply(y, function(x) ssid2beta(x, method = "bray"))
+    alpha.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 0))
+    beta.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 0))
+    gamma.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 0))
+    alpha.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 1))
+    beta.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 1))
+    gamma.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 1))
+    alpha.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 2))
+    beta.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 2))
+    gamma.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 2))
+    alpha.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', wts = rowSums(x)/sum(x), q = 1))
+    beta.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', wts = rowSums(x)/sum(x), q = 1))
+    gamma.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', wts = rowSums(x)/sum(x), q = 1))
+    c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
+    c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
+    c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
+    checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
+    v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
+    coherence <- sapply(y, function(x) embabs(x)$count)
+    turnov <- sapply(y, function(x) turnover(x))
+    morisit <- sapply(y, function(x) morisitas(x))
 
     out <- data.frame(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
-                      mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness,
-                      sd.richness, beta.whit, beta.whit.med, beta.whit.sd, beta.bray, beta.bray.med,
-                      beta.bray.sd, mean.c.score, median.c.score, v.ratio, mean.sites, median.sites, sd.sites)
+                      mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
+                      mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
+                      alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
+                      alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
+                      checkerscore, v.ratio, coherence, turnov, morisit)
   }
   return(out)
 }
@@ -283,8 +326,6 @@ ecosumstats <- function(y) {
 #' error.
 #'
 #' @export
-
-
 
 write.list <- function(x, dir, sep = "NULL") {
 
@@ -333,6 +374,180 @@ write.list <- function(x, dir, sep = "NULL") {
 }
 
 
+#' Estimate beta-diversity using sum of squared interpoint dissimilarities
+#'
+#' Calculates the sum of squared interpoint dissimilarities of a metacommunity
+#' matrix using the formula in Anderson et al. (2011) in Ecology Letters
+#'
+#' @param x metacommunity matrix
+#' @param method type of dissimilarity metric used; one of the methods in vegdist()
+#'
+#' @details Estimates beta-diversity of a metacommunty matrix by using the sum of
+#' squared interpoint dissimilarities: 1/(N(N-1))*sum(dij^2) where dij is the distance
+#' between community i and j.
+#'
+#' @export
 
+ssid2beta <- function(x, method = "bray") {
+  N <- nrow(x)
+  dist.x <- vegan::vegdist(x, method = method)
+  sigma <- (1/(N*(N-1)))*sum(dist.x^2)
+  sigma
+}
 
+#' Count Embedded Absences
+#'
+#' This function counts the nubmer of embedded abscences in a binary matrix
+#' to calculate the coherence of a metacommunity
+#'
+#' @param x A metacommunity matrix with species as columns and sites as rows
+#'
+#' @details This function counts the number of embedded absences in a sitexspecies
+#' matrix following Leibold and Mikkelson 2002.
+#'
+#' @examples
+#' meta <- rand_meta(10, 15, 100)
+#' embabs(meta)
+#'
+#' @export
+
+embabs <- function(x) {
+  countbetween <- function(zeros, ones) { # Internal function to count the number
+    #zeros betwen ones in a vector
+
+    valrange <- function(ones) { # Iternal function to make a list of ranges between
+      # all 1s in a vector
+      if(length(ones) > 1) {
+        t <- 1
+        out <- list()
+        while(t < length(ones)) {
+          vec <- c(ones[t], ones[t+1])
+          #print(vec)
+          out[[paste(t)]] <- vec
+          t <- t + 1
+        }
+      } else {
+        out <- list(c(0,0))
+      }
+      out
+    }
+
+    ranges <- valrange(ones)
+    #print(ranges)
+
+    multibetween <- function(x, ranges) { # Internal function to run dplyrs
+      #between on a list of ranges
+      out <- vector()
+      for(i in 1:length(ranges)) {
+        test <- dplyr::between(x, ranges[[i]][1], ranges[[i]][2])
+        out <- append(out, test)
+      }
+      out
+    }
+
+    numbet <- sapply(zeros, multibetween, ranges = ranges)
+    #print(numbet)
+    if(is.list(numbet)) {
+      numbet <- 0
+      return(list(count = numbet, indices = NULL))
+    } else if(is.matrix(numbet)) {
+      ind <- zeros[which(colSums(numbet) > 0)]
+      numbet <- sum(numbet)
+      return(list(count = numbet, indices = ind))
+    } else {
+      numbet <- sum(numbet)
+      return(list(count = numbet, indices = NULL))
+    }
+  }
+
+  x <- metacom::OrderMatrix(x)
+  #print(colSums(x))
+  inds <- vector()
+  count <- 0
+  for(i in 1:nrow(x)) {
+    #print(i)
+    zeros <- which(x[i,] == 0)
+    ones <- which(x[i,] == 1)
+    num <- countbetween(zeros, ones)
+    count <- count + num$count
+    #print(count)
+    if(num$count > 0) {
+      for(j in 1:length(num$indices)) {
+        index <- paste(i, num$indices[j])
+        inds <- append(inds, index)
+      }
+    }
+
+  }
+  #cat("Rows Done\n")
+  for(k in 1:ncol(x)) {
+    zeros <- which(x[,k] == 0)
+    ones <- which(x[,k] == 1)
+    num <- countbetween(zeros, ones)
+    #print(num)
+    if(length(num$indices) > 0) {
+      for(q in 1:length(num$indices)) {
+        index <- paste(num$indices[q], k)
+        #print(index)
+        if(index %in% inds) {
+          next
+        } else {
+          count <- count + 1
+          inds <- append(inds, index)
+        }
+      }
+    }
+  }
+  return(list(count = count, inds = inds, orderdmat = x))
+}
+
+#' turnover function copied from metacom package
+#'
+#' @export
+
+turnover <- function(web) {
+  web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
+  for (i in 1:ncol(web)) {
+    web[min(which(web[, i] == 1)):max(which(web[, i] == 1)), i] <- 1
+  }
+  D <- vegan::designdist(web, method = "(A-J)*(B-J)", terms = "minimum")
+  return(sum(D))
+}
+
+#' Boundary Clumping function (Morisitas index) copied from metacom
+#'
+#' @export
+
+morisitas <- function (comm) {
+  comm <- metacom::OrderMatrix(comm, scores = 1)
+  for (i in 1:ncol(comm)) {
+    comm[min(which(comm[, i] == 1)):max(which(comm[,i] == 1)), i] <- 1
+  }
+  comm <- t(comm)
+  M <- 0
+  ComBnd <- rep(0, ncol(comm))
+  ComBndChi <- 0
+  for (i in 1:nrow(comm)) {
+    ind1 <- which(comm[i, ] == 1)
+    for (j in 1:ncol(comm)) {
+      if (min(ind1) == j) {
+        ComBnd[j] = ComBnd[j] + 1
+      }
+      if (max(ind1) == j) {
+        ComBnd[j] = ComBnd[j] + 1
+      }
+    }
+  }
+  TotComBnd <- (nrow(comm) * 2) - ComBnd[1] - ComBnd[ncol(comm)]
+  ExpComBnd <- TotComBnd/(ncol(comm) - 2)
+  df <- -1
+  for (z in 2:(ncol(comm) - 1)) {
+    M <- M + ((ComBnd[z]/TotComBnd) * ((ComBnd[z] - 1)/(TotComBnd -
+                                                          1)))
+    ComBndChi <- ComBndChi + (((ComBnd[z] - ExpComBnd)^2)/ExpComBnd)
+    df <- df + 1
+  }
+  M <- M * (ncol(comm) - 2)
+  M
+}
 
