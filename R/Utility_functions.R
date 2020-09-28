@@ -202,8 +202,10 @@ evenness <- function(y) {
 
 ecosumstats <- function(y) {
 
+
   if(is.matrix(y)) {
 
+    y <- y[,colSums(y != 0) > 0] # remove empty columns
     mean.shannon <- mean(vegan::diversity(y, index = "shannon"))
     median.shannon <- median(vegan::diversity(y, index = "shannon"))
     sd.shannon <- sd(vegan::diversity(y, index = "shannon"))
@@ -259,6 +261,12 @@ ecosumstats <- function(y) {
 
   } else {
 
+    rmempty <- function(x) {
+      x <- x[,colSums(x != 0) > 0]
+      x
+    }
+
+    y <- lapply(y, rmempty) # Remove empty columns
     incs <- lapply(y, function(x) ifelse(x > 0, 1, 0))
 
     mean.shannon <- sapply(y, function(x) mean(vegan::diversity(x, index = "shannon")))
@@ -506,10 +514,6 @@ embabs <- function(x) {
 #' @export
 
 turnover <- function(web) {
-  y <- which(colSums(web) == 0) # Check to see if there are any species with 0 occurrences
-  if(length(y) > 0) {
-    web <- web[,-y] # Remove species with 0 occurrences
-  }
   web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
   for (i in 1:ncol(web)) {
     web[min(which(web[, i] == 1)):max(which(web[, i] == 1)), i] <- 1
@@ -523,10 +527,6 @@ turnover <- function(web) {
 #' @export
 
 morisitas <- function (comm) {
-  y <- which(colSums(comm) == 0) # Check to see if there are any species with 0 occurrences
-  if(length(y) > 0) {
-    comm <- comm[,-y] # Remove species with 0 occurrences
-  }
   comm <- metacom::OrderMatrix(comm, scores = 1)
   for (i in 1:ncol(comm)) {
     comm[min(which(comm[, i] == 1)):max(which(comm[,i] == 1)), i] <- 1
@@ -558,3 +558,5 @@ morisitas <- function (comm) {
   M <- M * (ncol(comm) - 2)
   M
 }
+
+#' Function to remove

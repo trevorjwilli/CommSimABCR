@@ -183,7 +183,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #'
 #' @export
 
-abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial = NULL, eqpop = FALSE) {
+abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial = NULL, eqpop = FALSE, outgens = NULL) {
 
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
 
@@ -281,17 +281,17 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
     inparam$fd <- fd[i,] # give appropriate fd vector
     inparam$mig <- set_mig(inparam, site.arrange[[i]], max.dist[i], tot[i]) # Create migration matrices
 
-    run <- moran_deme(x = meta[[i]], t = t, params = inparam, output = F) # Run simulation
-    out.meta[[paste0('sim',i)]] <- run$Metacommunity[[1]]
+    run <- moran_deme(x = meta[[i]], t = t, params = inparam, output = F, outgens = outgens) # Run simulation
+    out.meta[[paste0('sim',i)]] <- run$Metacommunity
 
     setTxtProgressBar(pb, i) # Update progress bar
 
   }
 
   if(!is.matrix(J)) { # Create output (different because J could be a matrix or just a vector)
-    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, parameters = param.out, input = priors))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, parameters = param.out, input = priors, nsims = nsims, time = t))
   } else {
-    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out, input = priors))
+    return(list(metacommunities = out.meta, selectionlist = sel, fdmat = fd, popsizemat = J, parameters = param.out, input = priors, nsims = nsims, time = t))
   }
 }
 
