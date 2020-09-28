@@ -506,6 +506,7 @@ embabs <- function(x) {
 #' @export
 
 turnover <- function(web) {
+  web <- web[,-which(colSums(web) == 0)]
   web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
   for (i in 1:ncol(web)) {
     web[min(which(web[, i] == 1)):max(which(web[, i] == 1)), i] <- 1
@@ -519,6 +520,7 @@ turnover <- function(web) {
 #' @export
 
 morisitas <- function (comm) {
+  comm <- comm[,-which(colSums(comm) == 0)]
   comm <- metacom::OrderMatrix(comm, scores = 1)
   for (i in 1:ncol(comm)) {
     comm[min(which(comm[, i] == 1)):max(which(comm[,i] == 1)), i] <- 1
