@@ -34,16 +34,22 @@ Creates a \emph{priors} object which is a list containing 10 elements.
   value is the standard deviation.
 
   migdist: One of 1 or 2, specifies a uniform or normal prior distribution for the migration distance.
+  Can be a vector with length equal to the number of species in simulations to give each species its own
+  migration distance prior distribution
 
   migdistparams: A 2L Numeric vector. If migdist = 1 then the first value is the minimum and the
   second value is the maximum. If migdist = 2 then the first value is the mean and the second
-  value is the standard deviation.
+  value is the standard deviation. Can also be a list of 2L numeric vectors specifying prior distribution
+  parameters for each species individually.
 
   migprobdist: One of 1 or 2, specifies a uniform or normal prior distribution for the migration probability.
+  Can be a vector with length equal to the number of species in simulations to give each species its own
+  migration probability prior distribution
 
   migprobparams: A 2L Numeric vector. If migprobdist = 1 then the first value is the minimum and the
   second value is the maximum. If migprobdist = 2 then the first value is the mean and the second
-  value is the standard deviation.
+  value is the standard deviation. Can also be a list of 2L numeric vectors specifying prior distribution
+  parameters for each species individually.
 }
 \description{
 Creates an empty priors object for use in \code{\link{abc_moran_deme}}

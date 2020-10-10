@@ -11,7 +11,9 @@ abc_moran_deme(
   x.max = NULL,
   y.max = NULL,
   spatial = NULL,
-  eqpop = FALSE
+  eqpop = FALSE,
+  eqmig = TRUE,
+  outgens = NULL
 )
 }
 \arguments{
@@ -28,6 +30,11 @@ generating spatial data.}
 
 \item{eqpop}{Logical, if TRUE all community sizes are the same within a simulation, if FALSE
 each community is randomly given a community size each simulation.}
+
+\item{eqmig}{Logical, if TRUE all species will have the same migration matrix, if FALSE
+each species will recieve it's own migration matrix each simulation according to priors file settings}
+
+\item{outgens}{Integer, vector giving the generations for which metacommunities should be output}
 }
 \value{
 If all communities have the same size, then returns a list with a list of final metacommunity matrices

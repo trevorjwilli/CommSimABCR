@@ -509,10 +509,6 @@ embabs <- function(x) {
   return(list(count = count, inds = inds, orderdmat = x))
 }
 
-#' turnover function copied from metacom package
-#'
-#' @export
-
 turnover <- function(web) {
   web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
   for (i in 1:ncol(web)) {
@@ -522,9 +518,6 @@ turnover <- function(web) {
   return(sum(D))
 }
 
-#' Boundary Clumping function (Morisitas index) copied from metacom
-#'
-#' @export
 
 morisitas <- function (comm) {
   comm <- metacom::OrderMatrix(comm, scores = 1)
@@ -559,4 +552,3 @@ morisitas <- function (comm) {
   M
 }
 
-#' Function to remove

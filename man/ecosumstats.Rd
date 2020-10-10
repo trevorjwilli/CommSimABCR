@@ -18,9 +18,14 @@ Calculates summary statistics on metacommunities to be used in ABC analyses.
 }
 \details{
 Calculates the mean, median, and standard deviations for shannon diversity index,
-simpson diversity index, Pielou's evenness, richness, beta diversity (whittakers and Sorensons),
-and the number of sites occupied for species for communities in a metacommunity matrix. It also
-calculats the mean and median C-score and the v-ratio.
+simpson diversity index, Pielou's evenness, richness, the number of sites occupied for species.
+It also calculates beta diversity by calculating the mean and sum of squared
+interpoint distances using pairwise Bray-Curtis dissimilarities (Anderson 2011),
+and true alpha, beta, and gamma values using Hills numbers for q = 0 through 2 Jost (2006, 2007),
+These values are calculated using equal weights for all values of q as well as weighted
+for q = 1. It also calculates the C-score (as well as skew and variance of C-score), checkerboard score,
+V-ratio. Lastly it calculates the number of embedded absences, Turnover, and Morisitas
+ index following Leibold and Mikkelson (2002).
 }
 \examples{
 meta <- CommSimABC::rand_meta(20, 30, 500)
