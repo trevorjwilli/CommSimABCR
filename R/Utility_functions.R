@@ -187,6 +187,9 @@ evenness <- function(y) {
 #' for q = 1. It also calculates the C-score (as well as skew and variance of C-score), checkerboard score,
 #' V-ratio. Lastly it calculates the number of embedded absences, Turnover, and Morisitas
 #'  index following Leibold and Mikkelson (2002).
+#'  
+#'  ecosumstats2() does the same thing but is written for only a single matrix, which
+#'  allows parallelization through the parallel package.
 #'
 #' @return Either a vector of summary statistics for a single metacommunity or a dataframe where columns
 #' are different summary statistics and rows are metacommunities.
@@ -318,6 +321,67 @@ ecosumstats <- function(y) {
   }
   return(out)
 }
+
+#' @describeIn ecosumstats Same as ecosumstats but only for single matrices to allow parallelization
+#' @export
+
+ecosumstats2 <- function(y) {
+    
+    y <- y[,colSums(y != 0) > 0] # remove empty columns
+    mean.shannon <- mean(vegan::diversity(y, index = "shannon"))
+    median.shannon <- median(vegan::diversity(y, index = "shannon"))
+    sd.shannon <- sd(vegan::diversity(y, index = "shannon"))
+    mean.simpson <- mean(vegan::diversity(y, index = "simpson"))
+    median.simpson <- median(vegan::diversity(y, index = "simpson"))
+    sd.simpson <- sd(vegan::diversity(y, index = "simpson"))
+    mean.evenness <- mean(evenness(y))
+    median.evenness <- median(evenness(y))
+    sd.evenness <- sd(evenness(y))
+    mean.richness <- mean(vegan::specnumber(y))
+    median.richness <- median(vegan::specnumber(y))
+    sd.richness <- sd(vegan::specnumber(y))
+    mean.sites <- mean(colSums(ifelse(y > 0, 1, 0)))
+    median.sites <- median(colSums(ifelse(y > 0, 1, 0)))
+    sd.sites <- sd(colSums(ifelse(y > 0, 1, 0)))
+    beta.bray <- mean(vegan::vegdist(y, method = "bray"))
+    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
+    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
+    beta.bray.ssid <- ssid2beta(y, method = "bray")
+    alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
+    beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
+    gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
+    alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
+    beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
+    gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
+    alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
+    beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
+    gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
+    alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
+    beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
+    gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    v.ratio <- bipartite::V.ratio(y)
+    coherence <- embabs(y)$count
+    turnov <- turnover(y)
+    morisit <- morisitas(y)
+    
+    out <- c(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
+             mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
+             mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
+             alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
+             alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
+             checkerscore, v.ratio, coherence, turnov, morisit)
+    names(out) <- c("mean.shannon", "median.shannon", "sd.shannon", "mean.simpson", "median.simpson", "sd.simpson",
+                    "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness", "sd.richness",
+                    "mean.sites", "median.sites", "sd.sites", "beta.bray", "beta.bray.med", "beta.bray.sd", "beta.bray.ssid",
+                    "alpha.0", "beta.0", "gamma.0", "alpha.1", "beta.1", "gamma.1", "alpha.2", "beta.2", "gamma.2",
+                    "alpha.1.weight", "beta.1.weight", "gamma.1.weight", "c.score", "c.score.skew", "c.score.var",
+                    "checkerscore", "v.ratio", "coherence", "turnov", "morisit")
+}
+
 
 #' Write Lists to External File
 #'

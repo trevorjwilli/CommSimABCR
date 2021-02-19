@@ -2,9 +2,12 @@
 % Please edit documentation in R/Utility_functions.R
 \name{ecosumstats}
 \alias{ecosumstats}
+\alias{ecosumstats2}
 \title{Calculate Summary Statistics}
 \usage{
 ecosumstats(y)
+
+ecosumstats2(y)
 }
 \arguments{
 \item{y}{Either a metacommunity matrix or a list of metacommunity matrices}
@@ -26,7 +29,15 @@ These values are calculated using equal weights for all values of q as well as w
 for q = 1. It also calculates the C-score (as well as skew and variance of C-score), checkerboard score,
 V-ratio. Lastly it calculates the number of embedded absences, Turnover, and Morisitas
  index following Leibold and Mikkelson (2002).
+ 
+ ecosumstats2() does the same thing but is written for only a single matrix, which
+ allows parallelization through the parallel package.
 }
+\section{Functions}{
+\itemize{
+\item \code{ecosumstats2}: Same as ecosumstats but only for single matrices to allow parallelization
+}}
+
 \examples{
 meta <- CommSimABC::rand_meta(20, 30, 500)
 ecosumstats(meta)
