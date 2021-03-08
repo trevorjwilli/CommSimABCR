@@ -380,6 +380,7 @@ ecosumstats2 <- function(y) {
                     "alpha.0", "beta.0", "gamma.0", "alpha.1", "beta.1", "gamma.1", "alpha.2", "beta.2", "gamma.2",
                     "alpha.1.weight", "beta.1.weight", "gamma.1.weight", "c.score", "c.score.skew", "c.score.var",
                     "checkerscore", "v.ratio", "coherence", "turnov", "morisit")
+    return(out)
 }
 
 
