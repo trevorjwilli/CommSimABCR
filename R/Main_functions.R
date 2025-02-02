@@ -82,7 +82,7 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
   Gen <- 2 # Set index for generations
   #print(paste("Generation", Gen), quote = F)
   if(output == T) {
-    pb <- txtProgressBar(min = 0, max = (t-1)*J, style = 3)
+    pb <- utils::txtProgressBar(min = 0, max = (t-1)*J, style = 3)
   }
 
   for(i in 1:((t-1)*J)){ # Loop through moran model until you have done t generations
@@ -169,7 +169,7 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
     }
 
     if(output == T) {
-      setTxtProgressBar(pb, i)
+      utils::setTxtProgressBar(pb, i)
     }
 
   }
@@ -193,22 +193,22 @@ plot.simrun <- function(x, lgnd = T, ...) {
   plot(x$metafreq[,1], type = "l", xlab = "Generations", ylab = "Frequency", col = clrs[1],
        ylim = c(0,1), main = "Meta-Community") # Plot frequency graph of first species
   for(j in 2:length(x$metafreq[1,])){ # Plot the rest of the spieces
-    lines(x$metafreq[,j], col = clrs[j])
+    graphics::lines(x$metafreq[,j], col = clrs[j])
   }
   txt <- paste("Species", 1:length(x$metafreq[1,]))
   if(lgnd == T) {
-    legend("topleft", legend = txt, col = clrs, lty = 1) # Add legend
+    graphics::legend("topleft", legend = txt, col = clrs, lty = 1) # Add legend
   }
 
   for(i in 1:length(x$comfreq)){
     plot(x$comfreq[[i]][,1], type = "l", xlab = "Generations", ylab = "Frequency", col = clrs[1],
          ylim = c(0,1), main = paste("Community", i))
     for(j in 2:length(x$comfreq[[1]][1,])) {
-      lines(x$comfreq[[i]][,j], col = clrs[j])
+      graphics::lines(x$comfreq[[i]][,j], col = clrs[j])
     }
     txt <- paste("Species", 1:length(x$metafreq[1,]))
     if(lgnd == T) {
-      legend("topleft", legend = txt, col = clrs, lty = 1) # Add legend
+      graphics::legend("topleft", legend = txt, col = clrs, lty = 1) # Add legend
     }
   }
 }

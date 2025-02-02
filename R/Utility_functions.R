@@ -26,18 +26,18 @@
 #' xy <- matrix(sample(50, 10), ncol = 2)
 #' make_mig(xy, 20, .1)
 #'
-#' pairdist <- dist(xy)
+#' pairdist <- stats::dist(xy)
 #' make_mig(pairdist, 20, .1)
 #'
 #' @export
 
 make_mig <- function(site.arrange, max.dist, tot) {
-  if(class(site.arrange) == "dist") {
+  if(any(class(site.arrange) == "dist")) {
     n.sites <- attr(site.arrange, "Size")
     mig.dist <- site.arrange
   } else {
     n.sites <- (length(site.arrange[,1]))
-    mig.dist <- dist(site.arrange, upper = T, diag = T) # Calculates the euclidean distances between sites
+    mig.dist <- stats::dist(site.arrange, upper = T, diag = T) # Calculates the euclidean distances between sites
   }
 
   mig <- mig.dist # copy mig.dist so as to not overwrite it in next line
@@ -210,57 +210,124 @@ ecosumstats <- function(y) {
 
     y <- y[,colSums(y != 0) > 0] # remove empty columns
     mean.shannon <- mean(vegan::diversity(y, index = "shannon"))
-    median.shannon <- median(vegan::diversity(y, index = "shannon"))
-    sd.shannon <- sd(vegan::diversity(y, index = "shannon"))
+    median.shannon <- stats::median(vegan::diversity(y, index = "shannon"))
+    sd.shannon <- stats::sd(vegan::diversity(y, index = "shannon"))
     mean.simpson <- mean(vegan::diversity(y, index = "simpson"))
-    median.simpson <- median(vegan::diversity(y, index = "simpson"))
-    sd.simpson <- sd(vegan::diversity(y, index = "simpson"))
+    median.simpson <- stats::median(vegan::diversity(y, index = "simpson"))
+    sd.simpson <- stats::sd(vegan::diversity(y, index = "simpson"))
     mean.evenness <- mean(evenness(y))
-    median.evenness <- median(evenness(y))
-    sd.evenness <- sd(evenness(y))
+    median.evenness <- stats::median(evenness(y))
+    sd.evenness <- stats::sd(evenness(y))
     mean.richness <- mean(vegan::specnumber(y))
-    median.richness <- median(vegan::specnumber(y))
-    sd.richness <- sd(vegan::specnumber(y))
+    median.richness <- stats::median(vegan::specnumber(y))
+    sd.richness <- stats::sd(vegan::specnumber(y))
     mean.sites <- mean(colSums(ifelse(y > 0, 1, 0)))
-    median.sites <- median(colSums(ifelse(y > 0, 1, 0)))
-    sd.sites <- sd(colSums(ifelse(y > 0, 1, 0)))
+    median.sites <- stats::median(colSums(ifelse(y > 0, 1, 0)))
+    sd.sites <- stats::sd(colSums(ifelse(y > 0, 1, 0)))
     beta.bray <- mean(vegan::vegdist(y, method = "bray"))
-    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
-    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
+    beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
+    beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
+    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
+    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
+    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
+    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
+    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
+    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
+    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
+    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
+    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
+    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
+    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
+    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
     morisit <- morisitas(y)
 
-    out <- c(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
-             mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
-             mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
-             alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
-             alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
-             checkerscore, v.ratio, coherence, turnov, morisit)
-    names(out) <- c("mean.shannon", "median.shannon", "sd.shannon", "mean.simpson", "median.simpson", "sd.simpson",
-                    "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness", "sd.richness",
-                    "mean.sites", "median.sites", "sd.sites", "beta.bray", "beta.bray.med", "beta.bray.sd", "beta.bray.ssid",
-                    "alpha.0", "beta.0", "gamma.0", "alpha.1", "beta.1", "gamma.1", "alpha.2", "beta.2", "gamma.2",
-                    "alpha.1.weight", "beta.1.weight", "gamma.1.weight", "c.score", "c.score.skew", "c.score.var",
-                    "checkerscore", "v.ratio", "coherence", "turnov", "morisit")
+    out <- c(mean.shannon,
+             median.shannon,
+             sd.shannon,
+             mean.simpson,
+             median.simpson,
+             sd.simpson,
+             mean.evenness,
+             median.evenness,
+             sd.evenness,
+             mean.richness,
+             median.richness,
+             sd.richness,
+             mean.sites,
+             median.sites,
+             sd.sites,
+             beta.bray,
+             beta.bray.med,
+             beta.bray.sd,
+             beta.bray.ssid,
+             # alpha.0,
+             # beta.0,
+             # gamma.0,
+             # alpha.1,
+             # beta.1,
+             # gamma.1,
+             # alpha.2,
+             # beta.2,
+             # gamma.2,
+             # alpha.1.weight,
+             # beta.1.weight,
+             # gamma.1.weight,
+             # c.score,
+             # c.score.skew,
+             # c.score.var,
+             # checkerscore,
+             v.ratio,
+             coherence,
+             turnov,
+             morisit)
+    names(out) <- c(
+      "mean.shannon",
+      "median.shannon",
+      "sd.shannon",
+      "mean.simpson",
+      "median.simpson",
+      "sd.simpson",
+      "mean.evenness",
+      "median.evenness",
+      "sd.evenness",
+      "mean.richness",
+      "median.richness",
+      "sd.richness",
+      "mean.sites",
+      "median.sites",
+      "sd.sites",
+      "beta.bray",
+      "beta.bray.med",
+      "beta.bray.sd",
+      "beta.bray.ssid",
+      # "alpha.0",
+      # "beta.0",
+      # "gamma.0",
+      # "alpha.1",
+      # "beta.1",
+      # "gamma.1",
+      # "alpha.2",
+      # "beta.2",
+      # "gamma.2",
+      # "alpha.1.weight",
+      # "beta.1.weight",
+      # "gamma.1.weight",
+      # "c.score",
+      # "c.score.skew",
+      # "c.score.var",
+      # "checkerscore",
+      "v.ratio",
+      "coherence",
+      "turnov",
+      "morisit")
 
   } else {
 
@@ -273,51 +340,85 @@ ecosumstats <- function(y) {
     incs <- lapply(y, function(x) ifelse(x > 0, 1, 0))
 
     mean.shannon <- sapply(y, function(x) mean(vegan::diversity(x, index = "shannon")))
-    median.shannon <- sapply(y, function(x) median(vegan::diversity(x, index = "shannon")))
-    sd.shannon <- sapply(y, function(x) sd(vegan::diversity(x, index = "shannon")))
+    median.shannon <- sapply(y, function(x) stats::median(vegan::diversity(x, index = "shannon")))
+    sd.shannon <- sapply(y, function(x) stats::sd(vegan::diversity(x, index = "shannon")))
     mean.simpson <- sapply(y, function(x) mean(vegan::diversity(x, index = "simpson")))
-    median.simpson <- sapply(y, function(x) median(vegan::diversity(x, index = "simpson")))
-    sd.simpson <- sapply(y, function(x) sd(vegan::diversity(x, index = "simpson")))
+    median.simpson <- sapply(y, function(x) stats::median(vegan::diversity(x, index = "simpson")))
+    sd.simpson <- sapply(y, function(x) stats::sd(vegan::diversity(x, index = "simpson")))
     mean.evenness <- sapply(y, function(x) mean(evenness(x)))
-    median.evenness <- sapply(y, function(x) median(evenness(x)))
-    sd.evenness <- sapply(y, function(x) sd(evenness(x)))
+    median.evenness <- sapply(y, function(x) stats::median(evenness(x)))
+    sd.evenness <- sapply(y, function(x) stats::sd(evenness(x)))
     mean.richness <- sapply(y, function(x) mean(vegan::specnumber(x)))
-    median.richness <- sapply(y, function(x) median(vegan::specnumber(x)))
-    sd.richness <- sapply(y, function(x) sd(vegan::specnumber(x)))
+    median.richness <- sapply(y, function(x) stats::median(vegan::specnumber(x)))
+    sd.richness <- sapply(y, function(x) stats::sd(vegan::specnumber(x)))
     mean.sites <- sapply(y, function(x) mean(colSums(ifelse(x > 0, 1, 0))))
-    median.sites <- sapply(y, function(x) median(colSums(ifelse(x > 0, 1, 0))))
-    sd.sites <- sapply(y, function(x) sd(colSums(ifelse(x > 0, 1, 0))))
+    median.sites <- sapply(y, function(x) stats::median(colSums(ifelse(x > 0, 1, 0))))
+    sd.sites <- sapply(y, function(x) stats::sd(colSums(ifelse(x > 0, 1, 0))))
     beta.bray <- sapply(y, function(x) mean(vegan::vegdist(x, method = "bray")))
-    beta.bray.med <- sapply(y, function(x) median(vegan::vegdist(x, method = "bray")))
-    beta.bray.sd <- sapply(y, function(x) sd(vegan::vegdist(x, method = "bray")))
+    beta.bray.med <- sapply(y, function(x) stats::median(vegan::vegdist(x, method = "bray")))
+    beta.bray.sd <- sapply(y, function(x) stats::sd(vegan::vegdist(x, method = "bray")))
     beta.bray.ssid <- sapply(y, function(x) ssid2beta(x, method = "bray"))
-    alpha.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 0))
-    beta.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 0))
-    gamma.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 0))
-    alpha.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 1))
-    beta.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 1))
-    gamma.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 1))
-    alpha.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 2))
-    beta.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 2))
-    gamma.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 2))
-    alpha.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', wts = rowSums(x)/sum(x), q = 1))
-    beta.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', wts = rowSums(x)/sum(x), q = 1))
-    gamma.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', wts = rowSums(x)/sum(x), q = 1))
-    c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
-    c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
-    c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
-    checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
+    # alpha.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 0))
+    # beta.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 0))
+    # gamma.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 0))
+    # alpha.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 1))
+    # beta.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 1))
+    # gamma.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 1))
+    # alpha.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 2))
+    # beta.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 2))
+    # gamma.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 2))
+    # alpha.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', wts = rowSums(x)/sum(x), q = 1))
+    # beta.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', wts = rowSums(x)/sum(x), q = 1))
+    # gamma.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', wts = rowSums(x)/sum(x), q = 1))
+    # c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
+    # c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
+    # c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
+    # checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
     v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
     coherence <- sapply(y, function(x) embabs(x)$count)
     turnov <- sapply(y, function(x) turnover(x))
     morisit <- sapply(y, function(x) morisitas(x))
 
-    out <- data.frame(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
-                      mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
-                      mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
-                      alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
-                      alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
-                      checkerscore, v.ratio, coherence, turnov, morisit)
+    out <- data.frame(
+      mean.shannon,
+      median.shannon,
+      sd.shannon,
+      mean.simpson,
+      median.simpson,
+      sd.simpson,
+      mean.evenness,
+      median.evenness,
+      sd.evenness,
+      mean.richness,
+      median.richness,
+      sd.richness,
+      mean.sites,
+      median.sites,
+      sd.sites,
+      beta.bray,
+      beta.bray.med,
+      beta.bray.sd,
+      beta.bray.ssid,
+      # alpha.0,
+      # beta.0,
+      # gamma.0,
+      # alpha.1,
+      # beta.1,
+      # gamma.1,
+      # alpha.2,
+      # beta.2,
+      # gamma.2,
+      # alpha.1.weight,
+      # beta.1.weight,
+      # gamma.1.weight,
+      # c.score,
+      # c.score.skew, 
+      # c.score.var,
+      # checkerscore,
+      v.ratio,
+      coherence,
+      turnov,
+      morisit)
   }
   return(out)
 }
@@ -329,57 +430,124 @@ ecosumstats2 <- function(y) {
     
     y <- y[,colSums(y != 0) > 0] # remove empty columns
     mean.shannon <- mean(vegan::diversity(y, index = "shannon"))
-    median.shannon <- median(vegan::diversity(y, index = "shannon"))
-    sd.shannon <- sd(vegan::diversity(y, index = "shannon"))
+    median.shannon <- stats::median(vegan::diversity(y, index = "shannon"))
+    sd.shannon <- stats::sd(vegan::diversity(y, index = "shannon"))
     mean.simpson <- mean(vegan::diversity(y, index = "simpson"))
-    median.simpson <- median(vegan::diversity(y, index = "simpson"))
-    sd.simpson <- sd(vegan::diversity(y, index = "simpson"))
+    median.simpson <- stats::median(vegan::diversity(y, index = "simpson"))
+    sd.simpson <- stats::sd(vegan::diversity(y, index = "simpson"))
     mean.evenness <- mean(evenness(y))
-    median.evenness <- median(evenness(y))
-    sd.evenness <- sd(evenness(y))
+    median.evenness <- stats::median(evenness(y))
+    sd.evenness <- stats::sd(evenness(y))
     mean.richness <- mean(vegan::specnumber(y))
-    median.richness <- median(vegan::specnumber(y))
-    sd.richness <- sd(vegan::specnumber(y))
+    median.richness <- stats::median(vegan::specnumber(y))
+    sd.richness <- stats::sd(vegan::specnumber(y))
     mean.sites <- mean(colSums(ifelse(y > 0, 1, 0)))
-    median.sites <- median(colSums(ifelse(y > 0, 1, 0)))
-    sd.sites <- sd(colSums(ifelse(y > 0, 1, 0)))
+    median.sites <- stats::median(colSums(ifelse(y > 0, 1, 0)))
+    sd.sites <- stats::sd(colSums(ifelse(y > 0, 1, 0)))
     beta.bray <- mean(vegan::vegdist(y, method = "bray"))
-    beta.bray.med <- median(vegan::vegdist(y, method = "bray"))
-    beta.bray.sd <- sd(vegan::vegdist(y, method = "bray"))
+    beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
+    beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
+    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
+    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
+    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
+    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
+    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
+    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
+    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
+    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
+    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
+    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
+    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
+    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
     morisit <- morisitas(y)
     
-    out <- c(mean.shannon, median.shannon, sd.shannon, mean.simpson, median.simpson, sd.simpson,
-             mean.evenness, median.evenness, sd.evenness, mean.richness, median.richness, sd.richness,
-             mean.sites, median.sites, sd.sites, beta.bray, beta.bray.med, beta.bray.sd, beta.bray.ssid,
-             alpha.0, beta.0, gamma.0, alpha.1, beta.1, gamma.1, alpha.2, beta.2, gamma.2,
-             alpha.1.weight, beta.1.weight, gamma.1.weight, c.score, c.score.skew, c.score.var,
-             checkerscore, v.ratio, coherence, turnov, morisit)
-    names(out) <- c("mean.shannon", "median.shannon", "sd.shannon", "mean.simpson", "median.simpson", "sd.simpson",
-                    "mean.evenness", "median.evenness", "sd.evenness", "mean.richness", "median.richness", "sd.richness",
-                    "mean.sites", "median.sites", "sd.sites", "beta.bray", "beta.bray.med", "beta.bray.sd", "beta.bray.ssid",
-                    "alpha.0", "beta.0", "gamma.0", "alpha.1", "beta.1", "gamma.1", "alpha.2", "beta.2", "gamma.2",
-                    "alpha.1.weight", "beta.1.weight", "gamma.1.weight", "c.score", "c.score.skew", "c.score.var",
-                    "checkerscore", "v.ratio", "coherence", "turnov", "morisit")
+    out <- c(mean.shannon,
+             median.shannon,
+             sd.shannon,
+             mean.simpson,
+             median.simpson,
+             sd.simpson,
+             mean.evenness,
+             median.evenness,
+             sd.evenness,
+             mean.richness,
+             median.richness,
+             sd.richness,
+             mean.sites,
+             median.sites,
+             sd.sites,
+             beta.bray,
+             beta.bray.med,
+             beta.bray.sd,
+             beta.bray.ssid,
+             # alpha.0,
+             # beta.0,
+             # gamma.0,
+             # alpha.1,
+             # beta.1,
+             # gamma.1,
+             # alpha.2,
+             # beta.2,
+             # gamma.2,
+             # alpha.1.weight,
+             # beta.1.weight,
+             # gamma.1.weight,
+             # c.score,
+             # c.score.skew,
+             # c.score.var,
+             # checkerscore,
+             v.ratio,
+             coherence,
+             turnov,
+             morisit)
+    names(out) <- c(
+      "mean.shannon",
+      "median.shannon",
+      "sd.shannon",
+      "mean.simpson",
+      "median.simpson",
+      "sd.simpson",
+      "mean.evenness",
+      "median.evenness",
+      "sd.evenness",
+      "mean.richness",
+      "median.richness",
+      "sd.richness",
+      "mean.sites",
+      "median.sites",
+      "sd.sites",
+      "beta.bray",
+      "beta.bray.med",
+      "beta.bray.sd",
+      "beta.bray.ssid",
+      # "alpha.0",
+      # "beta.0",
+      # "gamma.0",
+      # "alpha.1",
+      # "beta.1",
+      # "gamma.1",
+      # "alpha.2",
+      # "beta.2",
+      # "gamma.2",
+      # "alpha.1.weight",
+      # "beta.1.weight",
+      # "gamma.1.weight",
+      # "c.score",
+      # "c.score.skew",
+      # "c.score.var",
+      # "checkerscore",
+      "v.ratio",
+      "coherence",
+      "turnov",
+      "morisit")
     return(out)
 }
 
@@ -409,7 +577,7 @@ write.list <- function(x, dir, sep = "NULL") {
 
     if(is.data.frame(dex)) {
       ###print("dex = dataframe")
-      write.table(dex, paste0(dir, names(x)[i]), sep = sep, row.names = F)
+      utils::write.table(dex, paste0(dir, names(x)[i]), sep = sep, row.names = F)
 
 
     } else if(is.list(dex)) {
@@ -422,11 +590,11 @@ write.list <- function(x, dir, sep = "NULL") {
         #print(paste("ddex = ", ddex))
         if(is.matrix(ddex)) {
           #print("ddex is a matrix")
-          write.table(ddex, paste0(dir.out, names(dex)[j]), sep = ",", col.names = T, row.names = F)
+          utils::write.table(ddex, paste0(dir.out, names(dex)[j]), sep = ",", col.names = T, row.names = F)
 
         } else if(is.data.frame(ddex)) {
           #print("ddex is a dataframe")
-          write.table(ddex, paste0(dir.out, names(ddex)[j]), sep = sep, row.names = F)
+          utils::write.table(ddex, paste0(dir.out, names(ddex)[j]), sep = sep, row.names = F)
 
         } else {
           ###print("ddex is else")
@@ -437,7 +605,7 @@ write.list <- function(x, dir, sep = "NULL") {
 
     } else if(is.matrix(dex)) {
       ###print("dex = matrix")
-      write.table(dex, paste0(dir, names(x)[i]), sep = sep, col.names = T, row.names = F)
+      utils::write.table(dex, paste0(dir, names(x)[i]), sep = sep, col.names = T, row.names = F)
 
     } else {
       ###print("dex = else")

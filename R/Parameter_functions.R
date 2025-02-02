@@ -74,7 +74,7 @@ set_sel <- function(paramfile, distr, input1, input2) {
       stop('Selection coefficient cannot be less than 0')
     }
     for(j in 1:n.sites) {
-      coeffs <- runif(n.spec, min = input1, max = input2)
+      coeffs <- stats::runif(n.spec, min = input1, max = input2)
       sel[j,] <- coeffs
     }
     ##print(sel)
@@ -86,7 +86,7 @@ set_sel <- function(paramfile, distr, input1, input2) {
       stop('Mean selection coefficient cannot be less than zero')
     }
     for(j in 1:n.sites) {
-      coeffs <- rnorm(n.spec, mean = input1, sd = input2)
+      coeffs <- stats::rnorm(n.spec, mean = input1, sd = input2)
       coeffs[which(coeffs < 0)] <- 0.00000001 # Make sure there are no 0s
       sel[j,] <- coeffs
     }
@@ -99,7 +99,7 @@ set_sel <- function(paramfile, distr, input1, input2) {
       stop('Shape and scale parameters must be positive')
     }
     for(j in 1:n.sites) {
-      coeffs <- rgamma(n.spec, shape = input1, scale = input2)
+      coeffs <- stats::rgamma(n.spec, shape = input1, scale = input2)
       coeffs[which(coeffs < 0)] <- 0.00000001 # Make sure there are no 0s
       sel[j,] <- coeffs
     }
@@ -134,7 +134,7 @@ set_fd <- function(paramfile, input1, input2) {
   }
 
   n.spec <- attr(paramfile, 'NumSpec') # Calculate number of species
-  fd <- runif(n.spec, input1, input2)
+  fd <- stats::runif(n.spec, input1, input2)
   return(fd)
 }
 
@@ -181,7 +181,7 @@ set_mig <- function(paramfile, site.arrange, max.dist, tot) {
     stop("paramfile not a params class")
   }
 
-  if(class(site.arrange) == "dist") {
+  if(any(class(site.arrange) == "dist")) {
     n.sites <- attr(site.arrange, "Size")
   } else {
     n.sites <- (length(site.arrange[,1]))
@@ -325,7 +325,7 @@ make_spatialenv <- function(n.sites, n.meas, env.maxmin,
     } else if(autocor == FALSE) {
 
       rast <- raster::raster(ext = ext, resolution = 1) # Create initial raster
-      raster::values(rast) <- runif(raster::ncell(rast), env.maxmin[[i]][1], env.maxmin[[i]][2]) # Randomly assign raster values according to highs and lows
+      raster::values(rast) <- stats::runif(raster::ncell(rast), env.maxmin[[i]][1], env.maxmin[[i]][2]) # Randomly assign raster values according to highs and lows
       rast.list[[i]] <- rast # Output raster for measure
 
     }
@@ -438,7 +438,7 @@ make_selfromenv <- function(n.spec, env, env.maxmin, var.maxmin, meanvals = NULL
 
   if(is.null(meanvals)) {
 
-    spec.means <- mapply(runif, n = n.spec, min = val.lows, max = val.highs) # randomly sample means (i.e. environmental values species i is found at highest frequency)
+    spec.means <- mapply(stats::runif, n = n.spec, min = val.lows, max = val.highs) # randomly sample means (i.e. environmental values species i is found at highest frequency)
     # between max and min values of environmental variables for each species
 
   } else if(!is.null(meanvals)) {
@@ -453,7 +453,7 @@ make_selfromenv <- function(n.spec, env, env.maxmin, var.maxmin, meanvals = NULL
     for(i in 1:n.spec) { # Randomly generate covariance matrices for each spieces
       vars <- vector(length = n.meas)
       for(j in 1:n.meas) {
-        vars[j] <- runif(1, min = var.maxmin[[j]][1], var.maxmin[[j]][2])
+        vars[j] <- stats::runif(1, min = var.maxmin[[j]][1], var.maxmin[[j]][2])
       }
       sig <- diag(vars)
       sig.list[[i]] <- sig

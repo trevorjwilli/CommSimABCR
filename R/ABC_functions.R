@@ -120,13 +120,13 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 
   if(distr == 1) { # If prior for selection is uniform
     for(j in 1:n.sites) {
-      coeffs <- runif(n.spec, min = input1, max = input2)
+      coeffs <- stats::runif(n.spec, min = input1, max = input2)
       sel[j,] <- coeffs
     }
 
   } else if(distr == 2) { # If prior for selection is normal
     for(j in 1:n.sites) {
-      coeffs <- rnorm(n.spec, mean = input1, sd = input2)
+      coeffs <- stats::rnorm(n.spec, mean = input1, sd = input2)
       coeffs[which(coeffs < 0)] <- 0.00000001 # Make sure there are no 0s
       sel[j,] <- coeffs
     }
@@ -134,7 +134,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 
   } else if(distr == 3) { # If prior for selection is gamma distributed
     for(j in 1:n.sites) {
-      coeffs <- rgamma(n.spec, shape = input1, scale = input2)
+      coeffs <- stats::rgamma(n.spec, shape = input1, scale = input2)
       coeffs[which(coeffs < 0)] <- 0.00000001 # Make sure there are no 0s
       sel[j,] <- coeffs
     }
@@ -201,9 +201,9 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   if(eqpop == FALSE) { # Check to see if all communities will have the same community size, if False...
 
     if(priors$jdist == 1) { # Check to see if the prior distribution is uniform for community size
-      J <- t(replicate(nsims, round(runif(n.sites, min = priors$jparams[1], max = priors$jparams[2])))) # Create a matrix of population sizes where each row is a simulation and each column is a community
+      J <- t(replicate(nsims, round(stats::runif(n.sites, min = priors$jparams[1], max = priors$jparams[2])))) # Create a matrix of population sizes where each row is a simulation and each column is a community
     } else if(priors$jdist == 2) { # If prior distribution is normal
-      J <- t(replicate(nsims, round(rnorm(n.sites, mean = priors$jparams[1], sd = priors$jparams[2])))) # Create matrix
+      J <- t(replicate(nsims, round(stats::rnorm(n.sites, mean = priors$jparams[1], sd = priors$jparams[2])))) # Create matrix
     }
 
     if(length(which(J <= 0)) > 0) { # Check to see if any population sizes are negative or zero
@@ -213,9 +213,9 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   } else if(eqpop == TRUE) { # If all communities are the same size...
 
     if(priors$jdist == 1) { # Use the uniform distribution
-      J <- round(runif(nsims, min = priors$jparams[1], max = priors$jparams[2])) # Create vector of community sizes, each element corresponding to a simulation
+      J <- round(stats::runif(nsims, min = priors$jparams[1], max = priors$jparams[2])) # Create vector of community sizes, each element corresponding to a simulation
     } else if(priors$jdist == 2) { # Use the normal distribution
-      J <- round(rnorm(nsims, mean = priors$jparams[1], sd = priors$jparams[2])) # Create vector of community sizes
+      J <- round(stats::rnorm(nsims, mean = priors$jparams[1], sd = priors$jparams[2])) # Create vector of community sizes
     }
 
     if(length(which(J <= 0)) > 0) { # Check to see if any communities have size zero or negative
@@ -226,25 +226,25 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   sel <- replicate(nsims, set_sel_priors(n.spec, n.sites, priors$seldist, priors$selparams[1], priors$selparams[2]), simplify = F) # Create selection matrices for each simulation using set_sel_priors function
 
   if(priors$fddist == 1) { # Use Normal distribution for frequency dependence parameters
-    fd <- t(replicate(nsims, runif(n.spec, min = priors$fdparams[1], priors$fdparams[2]))) # Make matrix of fd parameters, each row is a simulation each column a species
+    fd <- t(replicate(nsims, stats::runif(n.spec, min = priors$fdparams[1], priors$fdparams[2]))) # Make matrix of fd parameters, each row is a simulation each column a species
   }
   else if(priors$fddist == 2) { # Use Normal distribution for frequency dependence parameters
-    fd <- t(replicate(nsims, rnorm(n.spec, mean = priors$fdparams[1], sd = priors$fdparams[2]))) # Make matrix of fd parameters
+    fd <- t(replicate(nsims, stats::rnorm(n.spec, mean = priors$fdparams[1], sd = priors$fdparams[2]))) # Make matrix of fd parameters
   }
 
   if(eqmig == TRUE) {
     if(priors$migdist == 1) { # Use Uniform distribution for migration distance
-      max.dist <- round(runif(nsims, min = priors$migdistparams[1], max = priors$migdistparams[2])) # Create vector of migration distances, each element is for one simulation
+      max.dist <- round(stats::runif(nsims, min = priors$migdistparams[1], max = priors$migdistparams[2])) # Create vector of migration distances, each element is for one simulation
     }
     else if(priors$migdist == 2) { # Use Normal distribution for migration distance
-      max.dist <- round(rnorm(nsims, mean = priors$migdistparams[1], sd = priors$migdistparams[2])) # Create vector of migration distances
+      max.dist <- round(stats::rnorm(nsims, mean = priors$migdistparams[1], sd = priors$migdistparams[2])) # Create vector of migration distances
     }
 
     if(priors$migprobdist == 1) { # Use Uniform distribution for migration probability
-      tot <- runif(nsims, min = priors$migprobparams[1], max = priors$migprobparams[2]) # Create vector of migration probabilities, each element corresponds with a simulation
+      tot <- stats::runif(nsims, min = priors$migprobparams[1], max = priors$migprobparams[2]) # Create vector of migration probabilities, each element corresponds with a simulation
     }
     else if(priors$migprobdist == 2) { # Use Normal distribution for migration probability
-      tot <- rnorm(nsims, mean = priors$migprobparams[1], sd = priors$migprobparams[2]) # Create vector of migration probabilities
+      tot <- stats::rnorm(nsims, mean = priors$migprobparams[1], sd = priors$migprobparams[2]) # Create vector of migration probabilities
     }
   } else if(eqmig == FALSE) {
     if(length(priors$migdist) == 1) { # If only one input for migdist replicate for number of species
@@ -272,9 +272,9 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 
     distrmaker <- function(n, distr, param1, param2) { # Function to run multiple random number distributions according to
       if(distr == 1) {                                 # Uniform, Normal, or Gamma
-        out <- runif(n, min = param1, max = param2)
+        out <- stats::runif(n, min = param1, max = param2)
       } else if(distr == 2) {
-        out <- rnorm(n, mean = param1, sd = param2)
+        out <- stats::rnorm(n, mean = param1, sd = param2)
       }
       out
     }
@@ -287,9 +287,9 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
   }
 
   if(is.null(spatial)) { # Check to see if user inputed spatial information is available
-    site.arrange <- replicate(nsims, random_points(n.sites, x.max, y.max), simplify = F) # If not randomly generate spatial data for sites (different for each simulation)
+    site.arrange <- random_points(n.sites, x.max, y.max) # If not randomly generate spatial data for sites (different for each simulation)
   } else { # If present
-    site.arrange <- replicate(nsims, spatial, simplify = F) # Make list of spatial data
+    site.arrange <- spatial # Make list of spatial data
   }
 
   if(is.matrix(J)) { # If different community sizes... (Needed because structure of J is different depending on this logical)
@@ -308,7 +308,7 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
 
   param.out <- list(J = J, max.dist = max.dist, mig.prob = tot, sel = sel, fd = fd) # Create list of parameter values used
 
-  pb <- txtProgressBar(min = 0, max = nsims, style = 3) # Set up progress bar
+  pb <- utils::txtProgressBar(min = 0, max = nsims, style = 3) # Set up progress bar
 
   out.meta <- list()
   out.params <- list()
@@ -318,15 +318,15 @@ abc_moran_deme <- function(nsims, t, priors, x.max = NULL, y.max = NULL, spatial
     inparam$s <- sel[[i]] # give appropriate selection matrix
     inparam$fd <- fd[i,] # give appropriate fd vector
     if(is.matrix(max.dist) & is.matrix(tot)) {
-      inparam$mig <- set_mig(inparam, site.arrange[[i]], max.dist[i,], tot[i,])
+      inparam$mig <- set_mig(inparam, site.arrange, max.dist[i,], tot[i,])
     } else {
-      inparam$mig <- set_mig(inparam, site.arrange[[i]], max.dist[i], tot[i]) # Create migration matrices
+      inparam$mig <- set_mig(inparam, site.arrange, max.dist[i], tot[i]) # Create migration matrices
     }
 
     run <- moran_deme(x = meta[[i]], t = t, params = inparam, output = F, outgens = outgens) # Run simulation
     out.meta[[paste0('sim',i)]] <- run$Metacommunity
     out.params[[paste0('sim',i)]] <- inparam
-    setTxtProgressBar(pb, i) # Update progress bar
+    utils::setTxtProgressBar(pb, i) # Update progress bar
 
   }
   return(list(metacommunities = out.meta, parameters = param.out, input = priors, parameterfiles = out.params, nsims = nsims, time = t))
