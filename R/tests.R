@@ -1,4 +1,5 @@
-devtools::install_github('trevorjwilli/CommSimABCR')
+# devtools::install_github('trevorjwilli/CommSimABCR')
+# install.packages('~/dev/r/CommSimABCR/')
 
 library(CommSimABC)
 

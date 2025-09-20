@@ -25,3 +25,6 @@ Imports:
     sp,
     vegan
 RoxygenNote: 7.1.1
+RemoteType: local
+RemotePkgRef: local::~/dev/r/CommSimABCR/
+RemoteUrl: /Users/trevorwilliams/dev/r/CommSimABCR
