@@ -25,7 +25,7 @@ Imports:
     rlang,
     sp,
     vegan
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
 RemoteType: local
 RemotePkgRef: local::~/dev/r/CommSimABCR/
 RemoteUrl: /Users/trevorwilliams/dev/r/CommSimABCR

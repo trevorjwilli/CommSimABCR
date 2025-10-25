@@ -36,7 +36,7 @@ This function creates a matrix of migration probabilities where cell ij
 xy <- matrix(sample(50, 10), ncol = 2)
 make_mig(xy, 20, .1)
 
-pairdist <- dist(xy)
+pairdist <- stats::dist(xy)
 make_mig(pairdist, 20, .1)
 
 }
