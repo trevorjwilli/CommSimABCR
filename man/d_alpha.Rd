@@ -7,14 +7,14 @@
 d_alpha(x, q = 1, weight = FALSE)
 }
 \arguments{
+\item{x}{Numeric matrix. A meta-community matrix (species x site)  where columns
+are species, rows are communities and cell ij is the count of species j in community i.}
+
 \item{q}{Numeric. Order of the diversity measure.}
 
 \item{weight}{Logical indicating if communities should be given different weights.
 Following Jost 2007, this is only valid when q=1 so if set to `TRUE`, q is 
 set to 1.}
-
-\item{com}{Numeric matrix. A meta-community matrix (species x site)  where columns
-are species, rows are communities and cell ij is the count of species j in community i.}
 }
 \value{
 Numeric, the true alpha diversity
@@ -26,9 +26,10 @@ Function to calculate the true alpha diversity of a metacommunity
 This function calculates the numbers equivalent of a diversity index
 following equations 12 and 13 of Jost 2007 (see also, Hill 1973 and Jost 2006). The equation follows as:
 \ifelse{html}{\out{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}{\eqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}
-for q \eqn{!=} 1 and #' \ifelse{html}{\out{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}{\eqn{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}
+for \eqn{q  1} and #' \ifelse{html}{\out{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}{\eqn{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}
 Where q is the order of the diversity measure, N is the number of communities,
 S is the number of species, and p_ij is the frequency of species j in community i
+\deqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}
 }
 \examples{
 xy <- matrix(sample(50, 10), ncol = 2)

@@ -27,6 +27,7 @@ test_that("normalize_meta warnings are correct", {
                  nrow = 3, byrow = T)
   
   expect_warning(normalize_meta(input), "Removing empty sites")
+  
 })
 
 
