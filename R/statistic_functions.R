@@ -236,32 +236,37 @@ morisitas <- function (x) {
 #'  Following Jost 2007, this is only valid when q=1 so if set to `TRUE`, q is 
 #'  set to 1 and weights are set according to the sizes of individual communities.
 #'
-#' @details This function calculates the numbers equivalent of a diversity index
-#' following equations 12 and 13 of Jost 2007 (see also, Hill 1973 and Jost 2006). The equation follows as:
+#' @details This function calculates the true alpha diversity using numbers equivalents
+#' as detailed in equations 11a and 11b of Jost 2007 (see also, Hill 1973 and Jost 2006).
+#'  The equation follows as:
 #' \ifelse{html}{\out{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}{\eqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}
 #' for \eqn{q  1} and #' \ifelse{html}{\out{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}{\eqn{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}
 #' Where q is the order of the diversity measure, N is the number of communities,
 #' S is the number of species, and p_ij is the frequency of species j in community i
-#' \deqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}
 #'
 #' @return Numeric, the true alpha diversity
 #'
 #' @examples
-#' xy <- matrix(sample(50, 10), ncol = 2)
-#' d_alpha(xy, 2)
+#' x <- rand_meta(10, 6, 50)
+#' d_alpha(x, q=2)
 #'
 #' @export
 
 d_alpha <- function(x, q=1, weight=FALSE) {
+
+  # If there is a single community turn into matrix
+  if(is.vector(x)) {
+    x <- t(as.matrix(as.integer(x)))
+  }
   
   # Ensure input is a site x species abundance matrix
   if(!is.matrix(x)) {
-    rlang::abort('Input must be an abundance (integer) site x species matrix',
+    rlang::abort('Input must be an abundance site x species matrix',
                  class = 'input_type_error')
   }
   
   if(!(typeof(x) == 'integer')) {
-    rlang::abort('Input must be an abundance (integer) site x species matrix',
+    rlang::abort('Input must be an abundance site x species matrix with type integer',
                  class = 'input_type_error')
   }
   
@@ -271,16 +276,13 @@ d_alpha <- function(x, q=1, weight=FALSE) {
   }
   
   # Ensure weight is boolean
-  if(!is.bool(weight)) {
+  if(!is.logical(weight)) {
     rlang::abort('Weight must be boolean, FALSE if unweighted, TRUE if weighted',
                  class = 'weight_type_error')
   }
   
   # Convert abundance matrix to frequency matrix
-  x <- normalize_meta(x)
-  
-  # Set default weight
-  w <- 1
+  x_norm <- normalize_meta(x)
   
   # If weights are to be used set q to 1
   # and w to proportion of total meta-community size
@@ -288,18 +290,33 @@ d_alpha <- function(x, q=1, weight=FALSE) {
     rlang::warn('Weights only valid for q=1, setting q to 1')
     q <- 1
     w <- rowSums(x)/sum(x)
+  } 
+  else {
+    # Set default weight
+    w <- rep(1/nrow(x_norm), nrow(x_norm))
   }
   
-  # Jost 2008 eqn. 13
+  # Jost 2007 eqn. 11a
   if(q != 1) {
-    sums <- apply(x, 1, \(x) sum(x^q))
-    metric <- (sums/length(sums))^(1/(1-q))
+    if(q == 0) {
+      x_norm <- apply(x_norm, 2, \(j) ifelse(j>0, 1, 0))
+      if(is.vector(x_norm)) {
+        x_norm <- t(as.matrix(x_norm))
+      }
+      numerator <- sum((w^q)*(rowSums(x_norm)))
+    }
+    else {
+      numerator <- sum((w^q)*(rowSums(x_norm^q)))
+    }
+    denominator <- sum(w^q)
+    metric <- (numerator/denominator)^(1/(1-q))
   }
   
   # Jost 2008 eqn. 11b
   else if(q == 1) {
-    sums <- apply(x, 1, \(x) sum(x*log(x), na.rm = TRUE))
-    metric <- exp(-w*sums)
+    sums <- x_norm*log(x_norm)
+    sums <- rowSums(sums, na.rm = TRUE)*-w
+    metric <- exp(sum(sums))
   }
   
   metric
@@ -317,18 +334,87 @@ d_alpha <- function(x, q=1, weight=FALSE) {
 #'  Following Jost 2007, this is only valid when q=1 so if set to `TRUE`, q is 
 #'  set to 1 and weights are set according to the sizes of individual communities.
 #'
-#' @details This function calculates the numbers equivalent of a diversity index
-#' following equations 12 and 13 of Jost 2007 (see also, Hill 1973 and Jost 2006). The equation follows as:
-#' \ifelse{html}{\out{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}{\eqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}}
-#' for \eqn{q  1} and #' \ifelse{html}{\out{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}{\eqn{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}}}
-#' Where q is the order of the diversity measure, N is the number of communities,
-#' S is the number of species, and p_ij is the frequency of species j in community i
-#' \deqn{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{1/1-q}}
+#' @details This function calculates true gamma diversity using numbers equivalents
+#' as detailed in Jost 2008. 
 #'
 #' @return Numeric, the true alpha diversity
 #'
 #' @examples
-#' xy <- matrix(sample(50, 10), ncol = 2)
-#' d_alpha(xy, 2)
+#' x <- rand_meta(10, 6, 50)
+#' d_gamma(x, q=1)
 #'
 #' @export
+
+d_gamma <- function(x, q=1, weight=FALSE) {
+  
+  # Ensure input is a site x species abundance matrix
+  if(!is.matrix(x)) {
+    rlang::abort('Input must be an abundance (integer) site x species matrix',
+                 class = 'input_type_error')
+  }
+  
+  if(!(typeof(x) == 'integer')) {
+    rlang::abort('Input must be an abundance (integer) site x species matrix',
+                 class = 'input_type_error')
+  }
+  
+  # Ensure q >= 0
+  if(q < 0) {
+    rlang::abort('q must be greater than or equal to 0', class = 'q_domain_error')
+  }
+  
+  # If weights are to be used set q to 1
+  # and w to proportion of total meta-community size
+  if(weight) {
+    rlang::warn('Weights only valid for q=1, setting q to 1')
+    q <- 1
+    w <- rowSums(x)/sum(x)
+  } 
+  else {
+    # Set default weight
+    w <- rep(1/nrow(x), nrow(x))
+  }
+  x <- normalize_meta(x)
+  if(q == 1) { # Jost eqn. 17b
+    p1 <- colSums(w*x)*-1
+    p2 <- log(colSums(w*x))
+    metric <- exp(sum(p1*p2))
+  } else { # Jost 2007 Errata
+    nsites <- nrow(x)
+    tmp <- (colSums(x)/nsites)^q
+    metric <- sum(tmp)^(1/(1-q))
+  }
+  
+  metric
+}
+
+#' Calculate True Beta Diversity
+#'
+#' Function to calculate the true beta diversity of a metacommunity
+#'
+#' @param x Numeric matrix. A meta-community abundance matrix (species x site)  where columns
+#' are species, rows are communities and cell ij is the count of species j in community i.
+#' @param q Numeric. Order of the diversity measure.
+#' @param weight Logical indicating if communities should be given different weights.
+#'  Following Jost 2007, this is only valid when q=1 so if set to `TRUE`, q is 
+#'  set to 1 and weights are set according to the sizes of individual communities.
+#'
+#' @details This function calculates true beta diversity using numbers equivalents
+#' as detailed in Jost 2007 equation 17c. 
+#'
+#' @return Numeric, the true alpha diversity
+#'
+#' @examples
+#' x <- rand_meta(10, 6, 50)
+#' d_beta(x, q=1)
+#'
+#' @export
+
+d_beta <- function(x, q=1, weight=FALSE) {
+  alpha <- d_alpha(x, q, weight)
+  gamma <- d_gamma(x, q, weight)
+  gamma/alpha
+}
+
+
+

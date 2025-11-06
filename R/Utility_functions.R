@@ -630,5 +630,5 @@ normalize_meta <- function(x) {
     x <- x[which(rowSums(x) > 0), ]
   }
   
-  return(t(apply(x, 1, \(x) x/sum(x))))
+  return(x/rowSums(x))
 }
