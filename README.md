@@ -6,7 +6,7 @@ This repository contains the development version for the R package CommSimABCR.
 CommSimABCR is a package to run stochastic metacommunity simulation models based on a modified
 haploid Moran process. In short, the model is a stochastic birth-death forward simulation model 
 that includes parameters for selection, migration, frequency dependence, and community sizes. 
-These package also calculates standard community ecology summary statistics for use in 
+This package also calculates standard community ecology summary statistics for use in 
 downstream approximate Bayesian computation (ABC) processes, like model selection or 
 parameter estimation. For more details see [link to preprint]
 
