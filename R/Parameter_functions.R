@@ -62,6 +62,10 @@ set_sel <- function(paramfile, distr, input1, input2) {
   if(!is.params(paramfile)) {
     stop("paramfile not a params class")
   }
+  
+  if(!(distr %in% c('uniform', 'normal', 'gamma'))) {
+    stop("distr must be one of: 'uniform', 'normal', 'gamma'")
+  }
 
   n.spec <- attr(paramfile, 'NumSpec') # Calculate number of species
 

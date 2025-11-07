@@ -35,9 +35,9 @@ V-ratio. Lastly it calculates the number of embedded absences, Turnover, and Mor
 }
 \section{Functions}{
 \itemize{
-\item \code{ecosumstats2}: Same as ecosumstats but only for single matrices to allow parallelization
-}}
+\item \code{ecosumstats2()}: Same as ecosumstats but only for single matrices to allow parallelization
 
+}}
 \examples{
 meta <- CommSimABC::rand_meta(20, 30, 500)
 ecosumstats(meta)

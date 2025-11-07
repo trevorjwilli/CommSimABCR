@@ -149,28 +149,6 @@ random_points <- function(n.sites, x.max, y.max) {
   return(points)
 }
 
-#' Calculate Community Evenness.
-#'
-#' Calculates Pielou's evenness of a metacommunity.
-#'
-#' @param y A metacommunity matrix (columns = species, rows = communities, cell values = counts).
-#'
-#' @return A vector of evenness values for each community.
-#'
-#' @examples
-#' meta <- rand_meta(20, 30, 500)
-#' evenness(meta)
-#'
-#' @export
-
-evenness <- function(y) {
-  H <- vegan::diversity(y)
-  J <- H/log(vegan::specnumber(y))
-  if(NaN %in% J) {
-    J[is.nan(J)] <- 0
-  }
-  return(J)
-}
 
 #' Calculate Summary Statistics
 #'
@@ -228,22 +206,23 @@ ecosumstats <- function(y) {
     beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
     beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    alpha.0 <- d_alpha(y, q = 0)
+    beta.0 <- d_beta(y, q = 0)
+    gamma.0 <- d_gamma(y, q = 0)
+    alpha.1 <- d_alpha(y, q = 1)
+    beta.1 <- d_beta(y, q = 1)
+    gamma.1 <- d_gamma(y, q = 1)
+    alpha.2 <- d_alpha(y, q = 2)
+    beta.2 <- d_beta(y, q = 2)
+    gamma.2 <- d_gamma(y, q = 2)
+    alpha.1.weight <- d_alpha(y, q = 1, weight=TRUE)
+    beta.1.weight <- d_beta(y, q = 1, weight=TRUE)
+    gamma.1.weight <- d_gamma(y, q = 1, weight=TRUE)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
@@ -268,22 +247,22 @@ ecosumstats <- function(y) {
              beta.bray.med,
              beta.bray.sd,
              beta.bray.ssid,
-             # alpha.0,
-             # beta.0,
-             # gamma.0,
-             # alpha.1,
-             # beta.1,
-             # gamma.1,
-             # alpha.2,
-             # beta.2,
-             # gamma.2,
-             # alpha.1.weight,
-             # beta.1.weight,
-             # gamma.1.weight,
-             # c.score,
-             # c.score.skew,
-             # c.score.var,
-             # checkerscore,
+             alpha.0,
+             beta.0,
+             gamma.0,
+             alpha.1,
+             beta.1,
+             gamma.1,
+             alpha.2,
+             beta.2,
+             gamma.2,
+             alpha.1.weight,
+             beta.1.weight,
+             gamma.1.weight,
+             c.score,
+             c.score.skew,
+             c.score.var,
+             checkerscore,
              v.ratio,
              coherence,
              turnov,
@@ -308,22 +287,22 @@ ecosumstats <- function(y) {
       "beta.bray.med",
       "beta.bray.sd",
       "beta.bray.ssid",
-      # "alpha.0",
-      # "beta.0",
-      # "gamma.0",
-      # "alpha.1",
-      # "beta.1",
-      # "gamma.1",
-      # "alpha.2",
-      # "beta.2",
-      # "gamma.2",
-      # "alpha.1.weight",
-      # "beta.1.weight",
-      # "gamma.1.weight",
-      # "c.score",
-      # "c.score.skew",
-      # "c.score.var",
-      # "checkerscore",
+      "alpha.0",
+      "beta.0",
+      "gamma.0",
+      "alpha.1",
+      "beta.1",
+      "gamma.1",
+      "alpha.2",
+      "beta.2",
+      "gamma.2",
+      "alpha.1.weight",
+      "beta.1.weight",
+      "gamma.1.weight",
+      "c.score",
+      "c.score.skew",
+      "c.score.var",
+      "checkerscore",
       "v.ratio",
       "coherence",
       "turnov",
@@ -358,22 +337,22 @@ ecosumstats <- function(y) {
     beta.bray.med <- sapply(y, function(x) stats::median(vegan::vegdist(x, method = "bray")))
     beta.bray.sd <- sapply(y, function(x) stats::sd(vegan::vegdist(x, method = "bray")))
     beta.bray.ssid <- sapply(y, function(x) ssid2beta(x, method = "bray"))
-    # alpha.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 0))
-    # beta.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 0))
-    # gamma.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 0))
-    # alpha.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 1))
-    # beta.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 1))
-    # gamma.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 1))
-    # alpha.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 2))
-    # beta.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 2))
-    # gamma.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 2))
-    # alpha.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', wts = rowSums(x)/sum(x), q = 1))
-    # beta.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', wts = rowSums(x)/sum(x), q = 1))
-    # gamma.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', wts = rowSums(x)/sum(x), q = 1))
-    # c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
-    # c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
-    # c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
-    # checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
+    alpha.0 <- sapply(y, function(x) d_alpha(x, q = 0))
+    beta.0 <- sapply(y, function(x) d_beta(x, q = 0))
+    gamma.0 <- sapply(y, function(x) d_gamma(x, q = 0))
+    alpha.1 <- sapply(y, function(x) d_alpha(x, q = 1))
+    beta.1 <- sapply(y, function(x) d_beta(x, q = 1))
+    gamma.1 <- sapply(y, function(x) d_gamma(x, q = 1))
+    alpha.2 <- sapply(y, function(x) d_alpha(x, q = 2))
+    beta.2 <- sapply(y, function(x) d_beta(x, q = 2))
+    gamma.2 <- sapply(y, function(x) d_gamma(x, q = 2))
+    alpha.1.weight <- sapply(y, function(x) d_alpha(x, q = 1, weight=TRUE))
+    beta.1.weight <- sapply(y, function(x) d_beta(x, q = 1, weight=TRUE))
+    gamma.1.weight <- sapply(y, function(x) d_gamma(x, q = 1, weight=TRUE))
+    c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
+    c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
+    c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
+    checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
     v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
     coherence <- sapply(y, function(x) embabs(x)$count)
     turnov <- sapply(y, function(x) turnover(x))
@@ -399,22 +378,22 @@ ecosumstats <- function(y) {
       beta.bray.med,
       beta.bray.sd,
       beta.bray.ssid,
-      # alpha.0,
-      # beta.0,
-      # gamma.0,
-      # alpha.1,
-      # beta.1,
-      # gamma.1,
-      # alpha.2,
-      # beta.2,
-      # gamma.2,
-      # alpha.1.weight,
-      # beta.1.weight,
-      # gamma.1.weight,
-      # c.score,
-      # c.score.skew, 
-      # c.score.var,
-      # checkerscore,
+      alpha.0,
+      beta.0,
+      gamma.0,
+      alpha.1,
+      beta.1,
+      gamma.1,
+      alpha.2,
+      beta.2,
+      gamma.2,
+      alpha.1.weight,
+      beta.1.weight,
+      gamma.1.weight,
+      c.score,
+      c.score.skew,
+      c.score.var,
+      checkerscore,
       v.ratio,
       coherence,
       turnov,
@@ -448,22 +427,22 @@ ecosumstats2 <- function(y) {
     beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
     beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    alpha.0 <- d_alpha(y, q = 0)
+    beta.0 <- d_beta(y, q = 0)
+    gamma.0 <- d_gamma(y, q = 0)
+    alpha.1 <- d_alpha(y, q = 1)
+    beta.1 <- d_beta(y, q = 1)
+    gamma.1 <- d_gamma(y, q = 1)
+    alpha.2 <- d_alpha(y, q = 2)
+    beta.2 <- d_beta(y, q = 2)
+    gamma.2 <- d_gamma(y, q = 2)
+    alpha.1.weight <- d_alpha(y, q = 1, weight=TRUE)
+    beta.1.weight <- d_beta(y, q = 1, weight=TRUE)
+    gamma.1.weight <- d_gamma(y, q = 1, weight=TRUE)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
@@ -488,22 +467,22 @@ ecosumstats2 <- function(y) {
              beta.bray.med,
              beta.bray.sd,
              beta.bray.ssid,
-             # alpha.0,
-             # beta.0,
-             # gamma.0,
-             # alpha.1,
-             # beta.1,
-             # gamma.1,
-             # alpha.2,
-             # beta.2,
-             # gamma.2,
-             # alpha.1.weight,
-             # beta.1.weight,
-             # gamma.1.weight,
-             # c.score,
-             # c.score.skew,
-             # c.score.var,
-             # checkerscore,
+             alpha.0,
+             beta.0,
+             gamma.0,
+             alpha.1,
+             beta.1,
+             gamma.1,
+             alpha.2,
+             beta.2,
+             gamma.2,
+             alpha.1.weight,
+             beta.1.weight,
+             gamma.1.weight,
+             c.score,
+             c.score.skew,
+             c.score.var,
+             checkerscore,
              v.ratio,
              coherence,
              turnov,
@@ -528,22 +507,22 @@ ecosumstats2 <- function(y) {
       "beta.bray.med",
       "beta.bray.sd",
       "beta.bray.ssid",
-      # "alpha.0",
-      # "beta.0",
-      # "gamma.0",
-      # "alpha.1",
-      # "beta.1",
-      # "gamma.1",
-      # "alpha.2",
-      # "beta.2",
-      # "gamma.2",
-      # "alpha.1.weight",
-      # "beta.1.weight",
-      # "gamma.1.weight",
-      # "c.score",
-      # "c.score.skew",
-      # "c.score.var",
-      # "checkerscore",
+      "alpha.0",
+      "beta.0",
+      "gamma.0",
+      "alpha.1",
+      "beta.1",
+      "gamma.1",
+      "alpha.2",
+      "beta.2",
+      "gamma.2",
+      "alpha.1.weight",
+      "beta.1.weight",
+      "gamma.1.weight",
+      "c.score",
+      "c.score.skew",
+      "c.score.var",
+      "checkerscore",
       "v.ratio",
       "coherence",
       "turnov",
@@ -615,173 +594,42 @@ write.list <- function(x, dir, sep = "NULL") {
 }
 
 
-#' Estimate beta-diversity using sum of squared interpoint dissimilarities
+#' Normalize Metacommunity 
 #'
-#' Calculates the sum of squared interpoint dissimilarities of a metacommunity
-#' matrix using the formula in Anderson et al. (2011) in Ecology Letters
+#' Normalizes a metacommunity matrix using community sizes
 #'
-#' @param x metacommunity matrix
-#' @param method type of dissimilarity metric used; one of the methods in vegdist()
-#'
-#' @details Estimates beta-diversity of a metacommunty matrix by using the sum of
-#' squared interpoint dissimilarities: 1/(N(N-1))*sum(dij^2) where dij is the distance
-#' between community i and j.
+#' @param x A metacommunity matrix (site x species) with cells as species counts
+#' 
+#' @details Converts a metacommunity with cell counts to cell frequencies based on 
+#' community sizes (i.e. species frequency in community i)
 #'
 #' @export
 
-ssid2beta <- function(x, method = "bray") {
-  N <- nrow(x)
-  dist.x <- vegan::vegdist(x, method = method)
-  sigma <- (1/(N*(N-1)))*sum(dist.x^2)
-  sigma
+normalize_meta <- function(x) {
+  
+  if(!is.matrix(x)) {
+    
+    tryCatch(
+      {
+        x <- as.matrix(x)
+      },
+      error = function(e) {
+        rlang::abort(paste0("Error: Input not coercible to matrix", e$message),
+                     class = 'matrix_error_uncoercible')
+      }
+    )
+
+  }
+  
+  if(!(typeof(x) %in% c('double', 'integer'))) {
+    rlang::abort("Input must be of type 'double' or 'integer'",
+                 class = 'matrix_error_incompatible_type')
+  }
+  
+  if(any(rowSums(x) == 0)) {
+    warning("At least one site has zero individuals. Removing empty sites")
+    x <- x[which(rowSums(x) > 0), ]
+  }
+  
+  return(x/rowSums(x))
 }
-
-#' Count Embedded Absences
-#'
-#' This function counts the nubmer of embedded abscences in a binary matrix
-#' to calculate the coherence of a metacommunity
-#'
-#' @param x A metacommunity matrix with species as columns and sites as rows
-#'
-#' @details This function counts the number of embedded absences in a sitexspecies
-#' matrix following Leibold and Mikkelson 2002.
-#'
-#' @examples
-#' meta <- rand_meta(10, 15, 100)
-#' embabs(meta)
-#'
-#' @export
-
-embabs <- function(x) {
-  countbetween <- function(zeros, ones) { # Internal function to count the number
-    #zeros betwen ones in a vector
-
-    valrange <- function(ones) { # Iternal function to make a list of ranges between
-      # all 1s in a vector
-      if(length(ones) > 1) {
-        t <- 1
-        out <- list()
-        while(t < length(ones)) {
-          vec <- c(ones[t], ones[t+1])
-          #print(vec)
-          out[[paste(t)]] <- vec
-          t <- t + 1
-        }
-      } else {
-        out <- list(c(0,0))
-      }
-      out
-    }
-
-    ranges <- valrange(ones)
-    #print(ranges)
-
-    multibetween <- function(x, ranges) { # Internal function to run dplyrs
-      #between on a list of ranges
-      out <- vector()
-      for(i in 1:length(ranges)) {
-        test <- dplyr::between(x, ranges[[i]][1], ranges[[i]][2])
-        out <- append(out, test)
-      }
-      out
-    }
-
-    numbet <- sapply(zeros, multibetween, ranges = ranges)
-    #print(numbet)
-    if(is.list(numbet)) {
-      numbet <- 0
-      return(list(count = numbet, indices = NULL))
-    } else if(is.matrix(numbet)) {
-      ind <- zeros[which(colSums(numbet) > 0)]
-      numbet <- sum(numbet)
-      return(list(count = numbet, indices = ind))
-    } else {
-      numbet <- sum(numbet)
-      return(list(count = numbet, indices = NULL))
-    }
-  }
-
-  x <- metacom::OrderMatrix(x)
-  #print(colSums(x))
-  inds <- vector()
-  count <- 0
-  for(i in 1:nrow(x)) {
-    #print(i)
-    zeros <- which(x[i,] == 0)
-    ones <- which(x[i,] == 1)
-    num <- countbetween(zeros, ones)
-    count <- count + num$count
-    #print(count)
-    if(num$count > 0) {
-      for(j in 1:length(num$indices)) {
-        index <- paste(i, num$indices[j])
-        inds <- append(inds, index)
-      }
-    }
-
-  }
-  #cat("Rows Done\n")
-  for(k in 1:ncol(x)) {
-    zeros <- which(x[,k] == 0)
-    ones <- which(x[,k] == 1)
-    num <- countbetween(zeros, ones)
-    #print(num)
-    if(length(num$indices) > 0) {
-      for(q in 1:length(num$indices)) {
-        index <- paste(num$indices[q], k)
-        #print(index)
-        if(index %in% inds) {
-          next
-        } else {
-          count <- count + 1
-          inds <- append(inds, index)
-        }
-      }
-    }
-  }
-  return(list(count = count, inds = inds, orderdmat = x))
-}
-
-turnover <- function(web) {
-  web <- metacom::OrderMatrix(web, scores = 1, binary = TRUE)
-  for (i in 1:ncol(web)) {
-    web[min(which(web[, i] == 1)):max(which(web[, i] == 1)), i] <- 1
-  }
-  D <- vegan::designdist(web, method = "(A-J)*(B-J)", terms = "minimum")
-  return(sum(D))
-}
-
-
-morisitas <- function (comm) {
-  comm <- metacom::OrderMatrix(comm, scores = 1)
-  for (i in 1:ncol(comm)) {
-    comm[min(which(comm[, i] == 1)):max(which(comm[,i] == 1)), i] <- 1
-  }
-  comm <- t(comm)
-  M <- 0
-  ComBnd <- rep(0, ncol(comm))
-  ComBndChi <- 0
-  for (i in 1:nrow(comm)) {
-    ind1 <- which(comm[i, ] == 1)
-    for (j in 1:ncol(comm)) {
-      if (min(ind1) == j) {
-        ComBnd[j] = ComBnd[j] + 1
-      }
-      if (max(ind1) == j) {
-        ComBnd[j] = ComBnd[j] + 1
-      }
-    }
-  }
-  TotComBnd <- (nrow(comm) * 2) - ComBnd[1] - ComBnd[ncol(comm)]
-  ExpComBnd <- TotComBnd/(ncol(comm) - 2)
-  df <- -1
-  for (z in 2:(ncol(comm) - 1)) {
-    M <- M + ((ComBnd[z]/TotComBnd) * ((ComBnd[z] - 1)/(TotComBnd -
-                                                          1)))
-    ComBndChi <- ComBndChi + (((ComBnd[z] - ExpComBnd)^2)/ExpComBnd)
-    df <- df + 1
-  }
-  M <- M * (ncol(comm) - 2)
-  M
-}
-

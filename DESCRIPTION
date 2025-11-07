@@ -4,7 +4,7 @@ Version: 1.0.0
 Authors@R: person(given = "Trevor",
            family = "Williams",
            role = c("aut", "cre"),
-           email = "trevorjwilli@byu.edu")
+           email = "trevorjwilli@gmail.edu")
 Description: This package runs metacommunity simulations following a modified 
     Moran model which can then be used for model selection and parameter estimation 
     in an Approximate Bayesian Computation (ABC) framework using the abc package. 
@@ -14,6 +14,7 @@ Description: This package runs metacommunity simulations following a modified
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 4.1.0)
 Imports: 
     bipartite,
     dplyr,
@@ -22,6 +23,16 @@ Imports:
     metacom,
     mvtnorm,
     raster,
+    rlang,
     sp,
-    vegan
-RoxygenNote: 7.1.1
+    vegan,
+    EcoSimR
+Remotes: GotelliLab/EcoSimR
+RoxygenNote: 7.3.3
+RemoteType: local
+RemotePkgRef: local::~/dev/r/CommSimABCR/
+RemoteUrl: /Users/trevorwilliams/dev/r/CommSimABCR
+Suggests: 
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
