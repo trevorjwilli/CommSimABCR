@@ -24,7 +24,7 @@ Function to calculate the true gamma diversity of a metacommunity
 }
 \details{
 This function calculates true gamma diversity using numbers equivalents
-as detailed in Jost 2008.
+as detailed in Jost 2007.
 }
 \examples{
 x <- rand_meta(10, 6, 50)

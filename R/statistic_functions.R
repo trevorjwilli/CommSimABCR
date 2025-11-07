@@ -238,7 +238,7 @@ morisitas <- function (x) {
 #'
 #' @details This function calculates the true alpha diversity using numbers equivalents
 #' as detailed in equations 11a and 11b of Jost 2007 (see also, Hill 1973 and Jost 2006).
-#'  The equation follows as: \deqn{\out{{}^{q}D_{\alpha} = [{\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}]^{(1/1-q)}}
+#' The equation follows as: \deqn{{}^{q}D_{\alpha} = {\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} p^{q}_{ij}^{(1/1-q)}}
 #' for \eqn{q \neq 1} and \deqn{{}^{q}D_{\alpha} = e^{{-\frac{1}_{N}} \sum_{i=1}^{N} \sum_{j=1}^{S} [p_{ij}*ln(p_{ij})]}} for \eqn{q = 1}
 #' Where q is the order of the diversity measure, N is the number of communities,
 #' S is the number of species, and p_ij is the frequency of species j in community i

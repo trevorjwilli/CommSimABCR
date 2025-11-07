@@ -206,22 +206,23 @@ ecosumstats <- function(y) {
     beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
     beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    alpha.0 <- d_alpha(y, q = 0)
+    beta.0 <- d_beta(y, q = 0)
+    gamma.0 <- d_gamma(y, q = 0)
+    alpha.1 <- d_alpha(y, q = 1)
+    beta.1 <- d_beta(y, q = 1)
+    gamma.1 <- d_gamma(y, q = 1)
+    alpha.2 <- d_alpha(y, q = 2)
+    beta.2 <- d_beta(y, q = 2)
+    gamma.2 <- d_gamma(y, q = 2)
+    alpha.1.weight <- d_alpha(y, q = 1, weight=TRUE)
+    beta.1.weight <- d_beta(y, q = 1, weight=TRUE)
+    gamma.1.weight <- d_gamma(y, q = 1, weight=TRUE)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
@@ -246,22 +247,22 @@ ecosumstats <- function(y) {
              beta.bray.med,
              beta.bray.sd,
              beta.bray.ssid,
-             # alpha.0,
-             # beta.0,
-             # gamma.0,
-             # alpha.1,
-             # beta.1,
-             # gamma.1,
-             # alpha.2,
-             # beta.2,
-             # gamma.2,
-             # alpha.1.weight,
-             # beta.1.weight,
-             # gamma.1.weight,
-             # c.score,
-             # c.score.skew,
-             # c.score.var,
-             # checkerscore,
+             alpha.0,
+             beta.0,
+             gamma.0,
+             alpha.1,
+             beta.1,
+             gamma.1,
+             alpha.2,
+             beta.2,
+             gamma.2,
+             alpha.1.weight,
+             beta.1.weight,
+             gamma.1.weight,
+             c.score,
+             c.score.skew,
+             c.score.var,
+             checkerscore,
              v.ratio,
              coherence,
              turnov,
@@ -286,22 +287,22 @@ ecosumstats <- function(y) {
       "beta.bray.med",
       "beta.bray.sd",
       "beta.bray.ssid",
-      # "alpha.0",
-      # "beta.0",
-      # "gamma.0",
-      # "alpha.1",
-      # "beta.1",
-      # "gamma.1",
-      # "alpha.2",
-      # "beta.2",
-      # "gamma.2",
-      # "alpha.1.weight",
-      # "beta.1.weight",
-      # "gamma.1.weight",
-      # "c.score",
-      # "c.score.skew",
-      # "c.score.var",
-      # "checkerscore",
+      "alpha.0",
+      "beta.0",
+      "gamma.0",
+      "alpha.1",
+      "beta.1",
+      "gamma.1",
+      "alpha.2",
+      "beta.2",
+      "gamma.2",
+      "alpha.1.weight",
+      "beta.1.weight",
+      "gamma.1.weight",
+      "c.score",
+      "c.score.skew",
+      "c.score.var",
+      "checkerscore",
       "v.ratio",
       "coherence",
       "turnov",
@@ -336,22 +337,22 @@ ecosumstats <- function(y) {
     beta.bray.med <- sapply(y, function(x) stats::median(vegan::vegdist(x, method = "bray")))
     beta.bray.sd <- sapply(y, function(x) stats::sd(vegan::vegdist(x, method = "bray")))
     beta.bray.ssid <- sapply(y, function(x) ssid2beta(x, method = "bray"))
-    # alpha.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 0))
-    # beta.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 0))
-    # gamma.0 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 0))
-    # alpha.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 1))
-    # beta.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 1))
-    # gamma.1 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 1))
-    # alpha.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', q = 2))
-    # beta.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', q = 2))
-    # gamma.2 <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', q = 2))
-    # alpha.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'alpha', wts = rowSums(x)/sum(x), q = 1))
-    # beta.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'beta', wts = rowSums(x)/sum(x), q = 1))
-    # gamma.1.weight <- sapply(y, function(x) vegetarian::d(x, lev = 'gamma', wts = rowSums(x)/sum(x), q = 1))
-    # c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
-    # c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
-    # c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
-    # checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
+    alpha.0 <- sapply(y, function(x) d_alpha(x, q = 0))
+    beta.0 <- sapply(y, function(x) d_beta(x, q = 0))
+    gamma.0 <- sapply(y, function(x) d_gamma(x, q = 0))
+    alpha.1 <- sapply(y, function(x) d_alpha(x, q = 1))
+    beta.1 <- sapply(y, function(x) d_beta(x, q = 1))
+    gamma.1 <- sapply(y, function(x) d_gamma(x, q = 1))
+    alpha.2 <- sapply(y, function(x) d_alpha(x, q = 2))
+    beta.2 <- sapply(y, function(x) d_beta(x, q = 2))
+    gamma.2 <- sapply(y, function(x) d_gamma(x, q = 2))
+    alpha.1.weight <- sapply(y, function(x) d_alpha(x, q = 1, weight=TRUE))
+    beta.1.weight <- sapply(y, function(x) d_beta(x, q = 1, weight=TRUE))
+    gamma.1.weight <- sapply(y, function(x) d_gamma(x, q = 1, weight=TRUE))
+    c.score <- sapply(incs, function(x) EcoSimR::c_score(x))
+    c.score.skew <- sapply(incs, function(x) EcoSimR::c_score_skew(x))
+    c.score.var <- sapply(incs, function(x) EcoSimR::c_score_var(x))
+    checkerscore <- sapply(incs, function(x) EcoSimR::checker(x))
     v.ratio <- sapply(y, function(x) bipartite::V.ratio(x))
     coherence <- sapply(y, function(x) embabs(x)$count)
     turnov <- sapply(y, function(x) turnover(x))
@@ -377,22 +378,22 @@ ecosumstats <- function(y) {
       beta.bray.med,
       beta.bray.sd,
       beta.bray.ssid,
-      # alpha.0,
-      # beta.0,
-      # gamma.0,
-      # alpha.1,
-      # beta.1,
-      # gamma.1,
-      # alpha.2,
-      # beta.2,
-      # gamma.2,
-      # alpha.1.weight,
-      # beta.1.weight,
-      # gamma.1.weight,
-      # c.score,
-      # c.score.skew, 
-      # c.score.var,
-      # checkerscore,
+      alpha.0,
+      beta.0,
+      gamma.0,
+      alpha.1,
+      beta.1,
+      gamma.1,
+      alpha.2,
+      beta.2,
+      gamma.2,
+      alpha.1.weight,
+      beta.1.weight,
+      gamma.1.weight,
+      c.score,
+      c.score.skew,
+      c.score.var,
+      checkerscore,
       v.ratio,
       coherence,
       turnov,
@@ -426,22 +427,22 @@ ecosumstats2 <- function(y) {
     beta.bray.med <- stats::median(vegan::vegdist(y, method = "bray"))
     beta.bray.sd <- stats::sd(vegan::vegdist(y, method = "bray"))
     beta.bray.ssid <- ssid2beta(y, method = "bray")
-    # alpha.0 <- vegetarian::d(y, lev = 'alpha', q = 0)
-    # beta.0 <- vegetarian::d(y, lev = 'beta', q = 0)
-    # gamma.0 <- vegetarian::d(y, lev = 'gamma', q = 0)
-    # alpha.1 <- vegetarian::d(y, lev = 'alpha', q = 1)
-    # beta.1 <- vegetarian::d(y, lev = 'beta', q = 1)
-    # gamma.1 <- vegetarian::d(y, lev = 'gamma', q = 1)
-    # alpha.2 <- vegetarian::d(y, lev = 'alpha', q = 2)
-    # beta.2 <- vegetarian::d(y, lev = 'beta', q = 2)
-    # gamma.2 <- vegetarian::d(y, lev = 'gamma', q = 2)
-    # alpha.1.weight <- vegetarian::d(y, lev = 'alpha', wts = rowSums(y)/sum(y), q = 1)
-    # beta.1.weight <- vegetarian::d(y, lev = 'beta', wts = rowSums(y)/sum(y), q = 1)
-    # gamma.1.weight <- vegetarian::d(y, lev = 'gamma', wts = rowSums(y)/sum(y), q = 1)
-    # c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
-    # c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
-    # c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
-    # checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
+    alpha.0 <- d_alpha(y, q = 0)
+    beta.0 <- d_beta(y, q = 0)
+    gamma.0 <- d_gamma(y, q = 0)
+    alpha.1 <- d_alpha(y, q = 1)
+    beta.1 <- d_beta(y, q = 1)
+    gamma.1 <- d_gamma(y, q = 1)
+    alpha.2 <- d_alpha(y, q = 2)
+    beta.2 <- d_beta(y, q = 2)
+    gamma.2 <- d_gamma(y, q = 2)
+    alpha.1.weight <- d_alpha(y, q = 1, weight=TRUE)
+    beta.1.weight <- d_beta(y, q = 1, weight=TRUE)
+    gamma.1.weight <- d_gamma(y, q = 1, weight=TRUE)
+    c.score <- EcoSimR::c_score(ifelse(y > 0, 1, 0))
+    c.score.skew <- EcoSimR::c_score_skew(ifelse(y > 0, 1, 0))
+    c.score.var <- EcoSimR::c_score_var(ifelse(y > 0, 1, 0))
+    checkerscore <- EcoSimR::checker(ifelse(y > 0, 1, 0))
     v.ratio <- bipartite::V.ratio(y)
     coherence <- embabs(y)$count
     turnov <- turnover(y)
@@ -466,22 +467,22 @@ ecosumstats2 <- function(y) {
              beta.bray.med,
              beta.bray.sd,
              beta.bray.ssid,
-             # alpha.0,
-             # beta.0,
-             # gamma.0,
-             # alpha.1,
-             # beta.1,
-             # gamma.1,
-             # alpha.2,
-             # beta.2,
-             # gamma.2,
-             # alpha.1.weight,
-             # beta.1.weight,
-             # gamma.1.weight,
-             # c.score,
-             # c.score.skew,
-             # c.score.var,
-             # checkerscore,
+             alpha.0,
+             beta.0,
+             gamma.0,
+             alpha.1,
+             beta.1,
+             gamma.1,
+             alpha.2,
+             beta.2,
+             gamma.2,
+             alpha.1.weight,
+             beta.1.weight,
+             gamma.1.weight,
+             c.score,
+             c.score.skew,
+             c.score.var,
+             checkerscore,
              v.ratio,
              coherence,
              turnov,
@@ -506,22 +507,22 @@ ecosumstats2 <- function(y) {
       "beta.bray.med",
       "beta.bray.sd",
       "beta.bray.ssid",
-      # "alpha.0",
-      # "beta.0",
-      # "gamma.0",
-      # "alpha.1",
-      # "beta.1",
-      # "gamma.1",
-      # "alpha.2",
-      # "beta.2",
-      # "gamma.2",
-      # "alpha.1.weight",
-      # "beta.1.weight",
-      # "gamma.1.weight",
-      # "c.score",
-      # "c.score.skew",
-      # "c.score.var",
-      # "checkerscore",
+      "alpha.0",
+      "beta.0",
+      "gamma.0",
+      "alpha.1",
+      "beta.1",
+      "gamma.1",
+      "alpha.2",
+      "beta.2",
+      "gamma.2",
+      "alpha.1.weight",
+      "beta.1.weight",
+      "gamma.1.weight",
+      "c.score",
+      "c.score.skew",
+      "c.score.var",
+      "checkerscore",
       "v.ratio",
       "coherence",
       "turnov",
