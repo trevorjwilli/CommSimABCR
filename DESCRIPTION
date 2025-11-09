@@ -11,7 +11,7 @@ Description: This package runs metacommunity simulations following a modified
     These simulation models can help researchers determine which metacommunity archetype
     is most likely influencing metacommunity structure as well as elucidate the amount
     and direction of dispersal between communities.  
-License: GPL-2
+License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.1.0)
@@ -26,8 +26,6 @@ Imports:
     rlang,
     sp,
     vegan,
-    EcoSimR
-Remotes: GotelliLab/EcoSimR
 RoxygenNote: 7.3.3
 RemoteType: local
 RemotePkgRef: local::~/dev/r/CommSimABCR/

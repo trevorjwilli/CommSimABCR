@@ -415,4 +415,199 @@ d_beta <- function(x, q=1, weight=FALSE) {
   gamma/alpha
 }
 
-#
+#' CScore Co-occurrence Metric
+#' @description Takes a binary presence-absence matrix and returns 
+#' Stone and Roberts' (1990) C-score.
+#' @details For each unique pair of species, the C-score is calculated as
+#' 
+#' \deqn{C_{ij} = (R_i - S)(R_j - S)}{C_ij = (R_i - S)(R_j - S)}
+#' 
+#' where R_i and R_j are the row sums for species i and j, and S is the number 
+#' of shared sites in which both species i and species j are present. For any 
+#' particular species pair, the larger the C-score, the more segregated the 
+#' pair, with fewer shared sites. However, the index can be difficult to 
+#' interpret when calculated as a matrix-wide average, because a single matrix
+#' can contain individual pairs of species that are segregated, random, or aggregated.
+#' 
+#' Degenerate matrices result from simulations where a row or column sum may be 0. <nick can you fill in the implications as to what this means if they are included or not?>
+#'
+#' Function taken from [EcosimR](https://github.com/GotelliLab/EcoSimR/blob/master/R/metrics.R) with permission.
+#'
+#' @param m a binary presence-absence matrix in which rows are species and columns
+#' are sites. 
+#' @return Returns the average C-score calculated across all possible species pairs
+#' in the matrix.
+#'  
+#' @references Stone. L. and A. Roberts. 1990. The checkerboard score and species
+#' distributions. Oecologia 85: 74-79.
+#' 
+#' Gotelli, N.J. and W. Ulrich. 2010. The empirical Bayes approach as a tool to 
+#' identify non-random species associations. Oecologia 162:463-477.
+#' 
+#' @note The matrix-wide C-score is not calculated for missing species, so empty
+#' rows in the matrix do not affect the result.
+#' @examples 
+#' obsCScore <- c_score(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+#' @export
+#' 
+
+c_score <- function(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+  
+{
+  m <- m[which(rowSums(m)>0),] # make calculation on submatrix with no missing species
+  shared = tcrossprod(m)
+  sums = rowSums(m)
+  
+  upper = upper.tri(shared)
+  
+  scores = (sums[row(shared)[upper]] - shared[upper])*
+    (sums[col(shared)[upper]] - shared[upper])
+  
+  return(mean(scores))
+}
+
+
+#' CScoreVariance Co-occurrence Metric
+#' @description Takes a binary presence-absence matrix and returns 
+#' the variance of the Stone and Roberts' (1990) C-score.
+#' @details A large value of this variance implies that some species pairs 
+#' in the matrix are strongly segregated (large C-score) and other species pairs 
+#' are random or aggregated.
+#' 
+#' Function taken from [EcosimR](https://github.com/GotelliLab/EcoSimR/blob/master/R/metrics.R) with permission.
+#'
+#' @param m a binary presence-absence matrix in which rows are species and columns
+#' are sites. 
+#' @return Returns the variance of the C-score calculated across all possible 
+#' species pairs in the matrix.
+#'  
+#' @references Stone, L. and A. Roberts. 1990. The checkerboard score and species
+#' distributions. Oecologia 85: 74-79.
+#' 
+#' Stone, L. and A. Roberts. 1992. Competitive exclusion, or species aggregation?
+#' An aid in deciding. Oecologia 91: 419-424.
+#' 
+#' @note The matrix-wide C-score is not calculated for missing species, so empty
+#' rows in the matrix do not affect the result. This index has not been 
+#' thoroughly tested with real data sets.
+#' 
+#' @seealso \code{\link{c_score}} co-occurrence index.
+#' 
+#' @examples 
+#' varCScore <- c_score_var(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+#' @export
+
+c_score_var <- function(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+  
+{
+  m <- m[which(rowSums(m)>0),] # make calculation on submatrix with no missing species
+  shared = tcrossprod(m)
+  sums = rowSums(m)
+  
+  upper = upper.tri(shared)
+  
+  scores = (sums[row(shared)[upper]] - shared[upper])*
+    (sums[col(shared)[upper]] - shared[upper])
+  
+  return(stats::var(scores))  
+}
+
+
+#' CScoreSkew Co-occurrence Metric
+#' @description Takes a binary presence-absence matrix and returns 
+#' the skewness of the Stone and Roberts' (1990) C-score.
+#' @details A large positive value of skewness implies a preponderance of species pairs 
+#' with large C-score values (segregated), whereas a large negative value of 
+#' skewness implies a preponderance of species pairs with small C-score values 
+#' (aggregated). 
+#' 
+#' Function taken from [EcosimR](https://github.com/GotelliLab/EcoSimR/blob/master/R/metrics.R) with permission.
+#'
+#' @param m a binary presence-absence matrix in which rows are species and columns
+#' are sites. 
+#' @return Returns the skewness of the C-score calculated across all possible 
+#' species pairs in the matrix.
+#'  
+#' @references Stone, L. and A. Roberts. 1990. The checkerboard score and species
+#' distributions. Oecologia 85: 74-79.
+#' 
+#' Stone, L. and A. Roberts. 1992. Competitive exclusion, or species aggregation?
+#' An aid in deciding. Oecologia 91: 419-424.
+#' 
+#' @note The matrix-wide C-score is not calculated for missing species, so empty
+#' rows in the matrix do not affect the result. This index has not been 
+#' thoroughly tested with real data sets.
+#' 
+#' @seealso \code{\link{c_score}} co-occurrence index.
+#' 
+#' @examples 
+#' skewCScore <- c_score_skew(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+#' @export
+
+#' 
+c_score_skew <- function(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+  
+{
+  m <- m[which(rowSums(m)>0),] # make calculation on submatrix with no missing species
+  shared = tcrossprod(m)
+  sums = rowSums(m)
+  
+  upper = upper.tri(shared)
+  
+  scores = (sums[row(shared)[upper]] - shared[upper])*
+    (sums[col(shared)[upper]] - shared[upper])
+  
+  
+  m3 <- mean((scores-mean(scores))^3)
+  cScoreSkew <- m3/(stats::sd(scores)^3)
+  
+  
+  return(cScoreSkew)  # return skewness of pairwise C-score
+  
+}
+
+#' Checker Co-occurrence Metric
+#' @description Function to calculate number of unique pairs of species 
+#' that never co-occur and form a "checkerboard pair".
+#' @details In Diamond's (1975) assembly rules model, pairs of species that 
+#' never co-occur in any site are interpreted as examples of interspecific competition.  
+#' A set of communities structured this way should contain more checkerboard
+#' pairs than expected by chance.
+#'
+#' Function taken from [EcosimR](https://github.com/GotelliLab/EcoSimR/blob/master/R/metrics.R) with permission.
+#' 
+#' @param m A binary presence-absence matrix in which rows are species and columns
+#' are sites. 
+#' @return Returns the number of unique species pairs that never co-occur.
+#'  
+#' @references Diamond, J.M. 1975. Assembly of species communities. p. 342-444 in:
+#' Ecology and Evolution of Communities. M.L. Cody and J.M. Diamond (eds.). 
+#' Harvard University Press, Cambridge. 
+#' 
+#' Connor, E.F. and D. Simberloff. 1979. The assembly of species communities: chance
+#' or competition? Ecology 60: 1132-1140.
+#' 
+#' @examples 
+#' obsChecker <- checker(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+#' @export
+#' 
+checker <- function(m=matrix(stats::rbinom(100,1,0.5),nrow=10)) 
+  
+{
+  m <- m[which(rowSums(m)>0),] # make calculation on submatrix with no missing species
+  
+  pairwise <- cbind(t(utils::combn(nrow(m),2)),0) # set up pairwise species list
+  
+  
+  shared <- mat.or.vec(1,nrow(pairwise))
+  
+  for (i in 1:nrow(pairwise)) 
+  {
+    shared[i] <- sum(m[pairwise[i,1],]==1 & m[pairwise[i,2],]==1)
+  }
+  
+  
+  
+  return(sum(shared==0)) # return number of pairs with no shared sites
+  
+}

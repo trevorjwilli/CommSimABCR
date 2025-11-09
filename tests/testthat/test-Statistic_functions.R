@@ -18,10 +18,10 @@ test_that("d_alpha produces expected output", {
   expect_equal(d_alpha(unbalanced_meta, q=3), 2.248595, tolerance = tol)
   
   # With unbalanced data and weights
-  expect_equal(d_alpha(unbalanced_meta, q=0, weight=TRUE), 2.509836, tolerance = tol)
-  expect_equal(d_alpha(unbalanced_meta, q=1, weight=TRUE), 2.509836, tolerance = tol)
-  expect_equal(d_alpha(unbalanced_meta, q=2, weight=TRUE), 2.509836, tolerance = tol)
-  expect_equal(d_alpha(unbalanced_meta, q=3, weight=TRUE), 2.509836, tolerance = tol)
+  expect_warning(expect_equal(d_alpha(unbalanced_meta, q=0, weight=TRUE), 2.509836, tolerance = tol))
+  expect_warning(expect_equal(d_alpha(unbalanced_meta, q=1, weight=TRUE), 2.509836, tolerance = tol))
+  expect_warning(expect_equal(d_alpha(unbalanced_meta, q=2, weight=TRUE), 2.509836, tolerance = tol))
+  expect_warning(expect_equal(d_alpha(unbalanced_meta, q=3, weight=TRUE), 2.509836, tolerance = tol))
   
   # That balanced data with and without weights are the same
   expect_equal(d_alpha(balanced_meta, q=1), d_alpha(balanced_meta, q=1, weight = TRUE), tolerance = tol)
@@ -66,10 +66,10 @@ test_that("d_beta produces expected output", {
   expect_equal(d_beta(unbalanced_meta, q=3), 1.677014, tolerance = tol)
   
   # With unbalanced data and weights
-  expect_equal(d_beta(unbalanced_meta, q=0, weight=TRUE), 1.579678, tolerance = tol)
-  expect_equal(d_beta(unbalanced_meta, q=1, weight=TRUE), 1.579678, tolerance = tol)
-  expect_equal(d_beta(unbalanced_meta, q=2, weight=TRUE), 1.579678, tolerance = tol)
-  expect_equal(d_beta(unbalanced_meta, q=3, weight=TRUE), 1.579678, tolerance = tol)
+  expect_warning(expect_equal(d_beta(unbalanced_meta, q=0, weight=TRUE), 1.579678, tolerance = tol))
+  expect_warning(expect_equal(d_beta(unbalanced_meta, q=1, weight=TRUE), 1.579678, tolerance = tol))
+  expect_warning(expect_equal(d_beta(unbalanced_meta, q=2, weight=TRUE), 1.579678, tolerance = tol))
+  expect_warning(expect_equal(d_beta(unbalanced_meta, q=3, weight=TRUE), 1.579678, tolerance = tol))
   
 })
 
