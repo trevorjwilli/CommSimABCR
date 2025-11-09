@@ -11,7 +11,7 @@ Description: This package runs metacommunity simulations following a modified
     These simulation models can help researchers determine which metacommunity archetype
     is most likely influencing metacommunity structure as well as elucidate the amount
     and direction of dispersal between communities.  
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.1.0)
