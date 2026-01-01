@@ -264,7 +264,7 @@ d_alpha <- function(x, q=1, weight=FALSE) {
                  class = 'input_type_error')
   }
   
-  if(!(typeof(x) == 'integer')) {
+  if(!(typeof(x) %in% c('integer', 'double'))) {
     rlang::abort('Input must be an abundance site x species matrix with type integer',
                  class = 'input_type_error')
   }
@@ -352,7 +352,7 @@ d_gamma <- function(x, q=1, weight=FALSE) {
                  class = 'input_type_error')
   }
   
-  if(!(typeof(x) == 'integer')) {
+  if(!(typeof(x) %in% c('integer', 'double'))) {
     rlang::abort('Input must be an abundance (integer) site x species matrix',
                  class = 'input_type_error')
   }
