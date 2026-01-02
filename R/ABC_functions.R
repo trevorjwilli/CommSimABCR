@@ -14,13 +14,14 @@
 #'   second value is the maximum. If jdist = 2 then the first value is the mean and the second
 #'   value is the standard deviation.
 #'
-#'   seldist: One of 1, 2, or 3, specifies a uniform, normal, or gamma prior distribution for the selection
+#'   seldist: One of 1, 2, 3, or 4, specifies a uniform, normal, gamma, or beta prior distribution for the selection
 #'   coefficients for each community.
 #'
 #'   selparams: A 2L Numeric vector. If seldist = 1 then the first value is the minimum and the
 #'   second value is the maximum. If seldist = 2 then the first value is the mean and the second
 #'   value is the standard deviation. If seldist = 3 then the first value is the shape parameter
-#'   and the second value is the scale parameter.
+#'   and the second value is the scale parameter. If seldist = 4 then the first value is the first
+#'   shape parameter and the second value is the second shape parameter.
 #'
 #'   fddist: One of 1 or 2, specifies a uniform or normal prior distribution for the frequency dependence parameters.
 #'
@@ -87,16 +88,17 @@ make_priors <- function(n.spec, n.site) {
 #'
 #' @param n.spec Numeric, the number of species in the metacommunity
 #' @param n.sites Numeric, the number of communities in the metacommunity
-#' @param distr Either a 1, 2, or 3, corresponding to Uniform, Normal, and
-#' Gamma prior distributions respectively.
+#' @param distr Either a 1, 2, 3, or 4 corresponding to Uniform, Normal,
+#' Gamma, and Beta prior distributions respectively.
 #' @param input1,input2 Numeric, parameters for prior distributions. See details.
 #'
 #' @details Creates a random selection coeffient matrix according to a prior
 #' distribution. Selection coefficients are randomly selected for species in
 #' each community according to the prior. If distr = 1, then input 1 is the
 #' minimum and input 2 is the maximum. If distr = 2, then input 1 is the mean
-#' and input 2 is the standard deviation. if distr = 3, then input 1 is the shape
-#' parameter, and input 2 is the scale parameter.
+#' and input 2 is the standard deviation. If distr = 3, then input 1 is the shape
+#' parameter, and input 2 is the scale parameter. If seldist = 4 then the first 
+#' value is the first shape parameter and the second value is the second shape parameter.
 #'
 #' @return A selection matrix where columns are species, rows are communities and
 #' cell ij is the selection coefficient for species j in community i.
@@ -111,6 +113,9 @@ make_priors <- function(n.spec, n.site) {
 #'
 #' # For Gamma Distribution
 #' set_sel_priors(5, 5, distr = 3, input1 = 2, input2 = .2)
+#' 
+#' # For Beta distribution
+#' set_sel_priors(5, 5, distr = 4, input1 = 8, input2 = 1)
 #'
 #' @export
 
@@ -136,6 +141,11 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
     for(j in 1:n.sites) {
       coeffs <- stats::rgamma(n.spec, shape = input1, scale = input2)
       coeffs[which(coeffs < 0)] <- 0.00000001 # Make sure there are no 0s
+      sel[j,] <- coeffs
+    }
+  } else if(distr == 4) { # If prior for selection is beta distributed
+    for(j in 1:n.sites) {
+      coeffs <- stats::rbeta(n.spec, shape1 = input1, shape2 = input2)
       sel[j,] <- coeffs
     }
   }
@@ -396,12 +406,16 @@ print.priors <- function(x, ...) {
     cat('Selection Distribution: Gamma\n')
     cat('Shape Parameter:', x$selparams[1], '\n')
     cat('Scale Parameter:', x$selparams[2], '\n\n')
+  } else if(x$seldist == 4) {
+    cat('Selection Distribution: Beta\n')
+    cat('Shape 1 Parameter:', x$selparams[1], '\n')
+    cat('Shape 2 Parameter:', x$selparams[2], '\n\n')
   } else {
     cat('Selection Distribution: ERROR\n')
     cat('Selection Input 1: ERROR\n')
     cat('Selection Input 2: ERROR\n\n')
   }
-
+    
   if(is.null(x$fddist)) {
     cat('Frequency Dependence Distribution:', x$fddist, '\n')
     cat('Frequency Dependence Input 1:', x$fdparams[1], '\n')

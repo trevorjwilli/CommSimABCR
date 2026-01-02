@@ -9,7 +9,7 @@ set_sel(paramfile, distr, input1, input2)
 \arguments{
 \item{paramfile}{\emph{params} object initialized using \code{\link{make_params}}.}
 
-\item{distr}{Character, one of 'uniform', 'normal', or 'gamma'.}
+\item{distr}{Character, one of 'uniform', 'normal', 'gamma', or 'beta'.}
 
 \item{input1, input2}{Numeric, parameters for distribution being used. See details.}
 }
@@ -25,7 +25,8 @@ This function generates a random selection matrix according to a specified
   distribution. The specified distribution can be one of 'uniform', 'normal', or 'gamma.'
   If 'uniform' input1 is the minimum value and input2 is the maximum value. If 'normal'
   input1 is the mean and input2 is the standard deviation. If 'gamma' input1 is the
-  shape and input2 is the scale parameters.
+  shape and input2 is the scale parameters. if 'beta' input1 is the first shape
+  parameter and input2 is the second shape parameter
 }
 \examples{
 
