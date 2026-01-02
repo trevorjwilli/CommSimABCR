@@ -19,13 +19,14 @@ Creates a \emph{priors} object which is a list containing 10 elements.
   second value is the maximum. If jdist = 2 then the first value is the mean and the second
   value is the standard deviation.
 
-  seldist: One of 1, 2, or 3, specifies a uniform, normal, or gamma prior distribution for the selection
+  seldist: One of 1, 2, 3, or 4, specifies a uniform, normal, gamma, or beta prior distribution for the selection
   coefficients for each community.
 
   selparams: A 2L Numeric vector. If seldist = 1 then the first value is the minimum and the
   second value is the maximum. If seldist = 2 then the first value is the mean and the second
   value is the standard deviation. If seldist = 3 then the first value is the shape parameter
-  and the second value is the scale parameter.
+  and the second value is the scale parameter. If seldist = 4 then the first value is the first
+  shape parameter and the second value is the second shape parameter.
 
   fddist: One of 1 or 2, specifies a uniform or normal prior distribution for the frequency dependence parameters.
 

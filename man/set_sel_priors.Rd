@@ -11,8 +11,8 @@ set_sel_priors(n.spec, n.sites, distr, input1, input2)
 
 \item{n.sites}{Numeric, the number of communities in the metacommunity}
 
-\item{distr}{Either a 1, 2, or 3, corresponding to Uniform, Normal, and
-Gamma prior distributions respectively.}
+\item{distr}{Either a 1, 2, 3, or 4 corresponding to Uniform, Normal,
+Gamma, and Beta prior distributions respectively.}
 
 \item{input1, input2}{Numeric, parameters for prior distributions. See details.}
 }
@@ -29,8 +29,9 @@ Creates a random selection coeffient matrix according to a prior
 distribution. Selection coefficients are randomly selected for species in
 each community according to the prior. If distr = 1, then input 1 is the
 minimum and input 2 is the maximum. If distr = 2, then input 1 is the mean
-and input 2 is the standard deviation. if distr = 3, then input 1 is the shape
-parameter, and input 2 is the scale parameter.
+and input 2 is the standard deviation. If distr = 3, then input 1 is the shape
+parameter, and input 2 is the scale parameter. If seldist = 4 then the first 
+value is the first shape parameter and the second value is the second shape parameter.
 }
 \examples{
 
@@ -42,5 +43,8 @@ set_sel_priors(5, 5, distr = 2, input1 = .5, input2 = .2)
 
 # For Gamma Distribution
 set_sel_priors(5, 5, distr = 3, input1 = 2, input2 = .2)
+
+# For Beta distribution
+set_sel_priors(5, 5, distr = 4, input1 = 8, input2 = 1)
 
 }

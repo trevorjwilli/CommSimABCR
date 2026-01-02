@@ -35,14 +35,15 @@ make_params <- function(n.spec, n.site) {
 #' Function to create random selection matrix using uniform, normal, or gamma distributions.
 #'
 #' @param paramfile \emph{params} object initialized using \code{\link{make_params}}.
-#' @param distr Character, one of 'uniform', 'normal', or 'gamma'.
+#' @param distr Character, one of 'uniform', 'normal', 'gamma', or 'beta'.
 #' @param input1,input2 Numeric, parameters for distribution being used. See details.
 #'
 #' @details This function generates a random selection matrix according to a specified
 #'   distribution. The specified distribution can be one of 'uniform', 'normal', or 'gamma.'
 #'   If 'uniform' input1 is the minimum value and input2 is the maximum value. If 'normal'
 #'   input1 is the mean and input2 is the standard deviation. If 'gamma' input1 is the
-#'   shape and input2 is the scale parameters.
+#'   shape and input2 is the scale parameters. if 'beta' input1 is the first shape
+#'   parameter and input2 is the second shape parameter
 #'
 #' @return Returns a matrix of selection coefficients where cell ij is the selection
 #' coefficient for species j in community i.
@@ -63,8 +64,8 @@ set_sel <- function(paramfile, distr, input1, input2) {
     stop("paramfile not a params class")
   }
   
-  if(!(distr %in% c('uniform', 'normal', 'gamma'))) {
-    stop("distr must be one of: 'uniform', 'normal', 'gamma'")
+  if(!(distr %in% c('uniform', 'normal', 'gamma', 'beta'))) {
+    stop("distr must be one of: 'uniform', 'normal', 'gamma', 'beta'")
   }
 
   n.spec <- attr(paramfile, 'NumSpec') # Calculate number of species
@@ -108,6 +109,15 @@ set_sel <- function(paramfile, distr, input1, input2) {
       sel[j,] <- coeffs
     }
     ##print(sel)
+  } else if(distr == 'beta') {
+    sel <- matrix(ncol = n.spec, nrow = n.sites)
+    if(input1 < 0 | input2 < 0) {
+      stop('Shape parameters must be positive')
+    }
+    for(j in 1:n.sites) {
+      coeffs <- stats::rbeta(n.spec, shape1 = input1, shape2 = input2)
+      sel[j,] <- coeffs
+    }
   }
   return(sel)
 }
