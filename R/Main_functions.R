@@ -1,5 +1,61 @@
 ### Main Model Functions ###
 
+#' Select community for birth
+#' 
+#' @param x Numeric matrix, species x site
+#' 
+#' @return int, index of community where birth is to occur
+#' @export
+
+samp_com_for_birth <- function(x) {
+  
+  if(!is.matrix(x)) {
+    rlang::abort('Input must be an abundance (integer) site x species matrix',
+                 class = 'input_type_error')
+  }
+  
+  n_com <- nrow(x)
+  probs <- rowSums(x)/sum(x)
+  
+  out <- sample(n_com, size=1, prob=probs)
+  out
+}
+
+#' Select species for birth
+#' 
+#' @param x Numeric matrix, species x site
+#' @param com_index Int, row index for community to sample
+#' @param selection_matrix Numeric matrix, matrix of selection coefficients
+#' 
+#' @return int, index of species for birth
+#' @export
+
+samp_species_for_birth <- function(x, com_index, selection_matrix) {
+  
+  # Check that x is a matrix
+  if(!is.matrix(x)) {
+    rlang::abort('x parameter must be an abundance (integer) site x species matrix',
+                 class = 'input_type_error')
+  }
+  
+  # Check that selection_matrix is a matrix
+  if(!is.matrix(x)) {
+    rlang::abort('selection_matrix must be a matrix',
+                 class = 'input_type_error')
+  }
+  
+  # Check that com_index is an int
+  if(!typeof(com_index %in% c('integer', 'double'))) {
+    rlang::abort('com_index parameter must be of type integer or double')
+  }
+  
+  # Check that com_index is a single value
+  if(length(com_index != 1)) {
+    rlang::abort('com_index parameter must be a single integer')
+  }
+  
+}
+
 #' Run Metacommunity Moran Simulation.
 #'
 #' This functions runs a single metacommunity simulation using an adapted version of
