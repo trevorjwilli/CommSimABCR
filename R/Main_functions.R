@@ -21,16 +21,33 @@ samp_com_for_birth <- function(x) {
   out
 }
 
-#' Select species for birth
+#' Calculate species probabilities
 #' 
 #' @param x Numeric matrix, species x site
 #' @param com_index Int, row index for community to sample
-#' @param selection_matrix Numeric matrix, matrix of selection coefficients
+#' @param params Numeric matrix, matrix of selection coefficients
 #' 
 #' @return int, index of species for birth
 #' @export
 
-samp_species_for_birth <- function(x, com_index, selection_matrix) {
+calculate_species_probs <- function(x, com_index, params) {
+  
+  birth.freqs <- x[com_index,] / sum(x[com_index,])
+  
+  coeff <- exp(params$fd * (birth.freqs - (1/length(x[com_index,]))) + log(params$s[com_index,])) # Use the equation from Vellend 2016 to calculate density dependent selection coefficients
+  probs <- (coeff*birth.freqs)/sum(coeff*birth.freqs)
+  probs
+}
+
+#' Select species for birth
+#' 
+#' @param x Numeric matrix, species x site
+#' @param probs Numeric vector, vector of species probabilities
+#' 
+#' @return int, index of species for birth
+#' @export
+
+samp_species_for_birth <- function(x, probs) {
   
   # Check that x is a matrix
   if(!is.matrix(x)) {
@@ -38,22 +55,85 @@ samp_species_for_birth <- function(x, com_index, selection_matrix) {
                  class = 'input_type_error')
   }
   
-  # Check that selection_matrix is a matrix
-  if(!is.matrix(x)) {
-    rlang::abort('selection_matrix must be a matrix',
-                 class = 'input_type_error')
+  # Check that the coefficients vector is a vector
+  if(!is.vector(probs)) {
+    rlang::abort('Probability vector is not a vector')
   }
   
-  # Check that com_index is an int
-  if(!typeof(com_index %in% c('integer', 'double'))) {
-    rlang::abort('com_index parameter must be of type integer or double')
+  # Check that coefficients vector is the right length
+  if(length(probs) != ncol(x)) {
+    rlang::abort('Probability vector is not the correct length')
   }
   
-  # Check that com_index is a single value
-  if(length(com_index != 1)) {
-    rlang::abort('com_index parameter must be a single integer')
-  }
+  sample(ncol(x), size = 1, prob = probs) # Select which species reproduces
   
+}
+
+#' Select Community for death
+#' 
+#' @param x Numeric matrix, species x site
+#' @param species_index Int, row index for community to sample
+#' @param com_index Int, community of birth species
+#' @param params Params object 
+#' 
+#' @return int, index of species for birth
+#' @export
+
+samp_com_for_death <- function(x, species_index, com_index, params) {
+
+  sample(nrow(x), size = 1, prob = params$mig[[species_index]][,com_index])
+
+}
+
+#' Select species for death
+#' 
+#' @param x Numeric matrix, species x site
+#' @param com_index Int, community index for death community
+#' 
+#' @return int, index of species for birth
+#' @export
+
+samp_species_for_death <- function(x, com_index) {
+  
+  probs = x[com_index, ]/sum(x[com_index,])
+  ind.death <- sample(ncol(x), size = 1, prob = probs)
+  ind.death
+  
+}
+
+#' Update metacommunity matrix 
+#' 
+#' @param x Numeric matrix, species x site
+#' @param com_index Int, community index for community where death occurs
+#' @param b_species_index Int, index for species for birth
+#' @param d_species_index Int, index for species for death
+#' 
+#' @return numeric matrix, updated matrix
+
+update_meta <- function(x, com_index, b_species_index, d_species_index) {
+  
+  x[com_index, d_species_index] <- x[com_index, d_species_index] - 1
+  x[com_index, b_species_index] <- x[com_index, b_species_index] + 1
+  x
+
+}
+
+#' Conduct a single birth death process
+#' 
+#' @param x Numeric matrix, species x site
+#' @param params params object
+#' 
+#' @return numeric matrix, updated matrix
+
+
+birth_death_process <- function(x, params) {
+  b_com <- samp_com_for_birth(x)
+  s_probs <- calculate_species_probs(x, b_com, params)
+  s_birth <- samp_species_for_birth(x, s_probs)
+  d_com <- samp_com_for_death(x, s_birth, b_com, params)
+  s_death <- samp_species_for_death(x, d_com)
+  x <- update_meta(x, d_com, s_birth, s_death)
+  x
 }
 
 #' Run Metacommunity Moran Simulation.

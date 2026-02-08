@@ -29,6 +29,7 @@ Imports:
     parallel,
     foreach,
     doParallel,
+    Rcpp
 RoxygenNote: 7.3.3
 RemoteType: local
 RemotePkgRef: local::~/dev/r/CommSimABCR/
@@ -37,6 +38,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
+    tidyr,
     withr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp

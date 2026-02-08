@@ -492,6 +492,7 @@ print.priors <- function(x, ...) {
 #' @param eqmig Logical, if TRUE all species will have the same migration matrix, if FALSE
 #' each species will receive it's own migration matrix
 #' @param outgens Integer, vector giving the generations for which metacommunities should be output
+#' @param output Logical, if True outputs progress bar.
 #'
 #' @return simrun object with simulation results
 #'
@@ -588,6 +589,10 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
 }
 
 #' Parallelized abc_moran_deme
+#' @describeIn abc_moran_deme Parallelized version of abc_moran_deme
+#' @param parallel Boolean, should the simulations be run in parallel
+#' @param n_cores the number of cores to use. If Null sets the number of cores
+#' to 2 less than the computer contains
 #' @importFrom foreach foreach %dopar% %do%
 #' @importFrom doParallel registerDoParallel
 #' @importFrom parallel makeCluster stopCluster detectCores

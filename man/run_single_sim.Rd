@@ -33,6 +33,8 @@ each community is randomly given a community size each simulation.}
 each species will receive it's own migration matrix}
 
 \item{outgens}{Integer, vector giving the generations for which metacommunities should be output}
+
+\item{output}{Logical, if True outputs progress bar.}
 }
 \value{
 simrun object with simulation results
