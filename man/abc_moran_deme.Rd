@@ -8,12 +8,13 @@ abc_moran_deme(
   nsims,
   t,
   priors,
-  x.max = NULL,
-  y.max = NULL,
+  x.max = 100,
+  y.max = 100,
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
-  outgens = NULL
+  parallel = TRUE,
+  n_cores = NULL
 )
 }
 \arguments{
@@ -34,7 +35,10 @@ each community is randomly given a community size each simulation.}
 \item{eqmig}{Logical, if TRUE all species will have the same migration matrix, if FALSE
 each species will recieve it's own migration matrix each simulation according to priors file settings}
 
-\item{outgens}{Integer, vector giving the generations for which metacommunities should be output}
+\item{parallel}{Boolean, should the simulations be run in parallel}
+
+\item{n_cores}{the number of cores to use. If Null sets the number of cores
+to 2 less than the computer contains}
 }
 \value{
 If all communities have the same size, then returns a list with a list of final metacommunity matrices
@@ -56,7 +60,7 @@ this information, parameter values are randomly drawn according to the prior dis
 are run from these parameter values.
 }
 \examples{
-
+\dontrun{
 testpriors <- make_priors(5, 5)
 xy <- random_points(5, 100, 100)
 
@@ -71,6 +75,7 @@ testpriors$migdistparams <- c(10, 50)
 testpriors$migprobdist <- 1
 testpriors$migprobparams <- c(.1, .2)
 
-abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy)
+abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy, parallel = FALSE)
+}
 
 }

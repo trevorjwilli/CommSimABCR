@@ -2,9 +2,12 @@
 % Please edit documentation in R/Main_functions.R
 \name{moran_deme}
 \alias{moran_deme}
+\alias{moran_deme_r}
 \title{Run Metacommunity Moran Simulation.}
 \usage{
-moran_deme(x, t, params, outgens = NULL, output = TRUE)
+moran_deme(x, t, params, output = TRUE)
+
+moran_deme_r(x, t, params, output = TRUE)
 }
 \arguments{
 \item{x}{Numeric matrix, starting metacommunity (species x site) matrix where columns
@@ -14,21 +17,14 @@ are species, rows are communities and cell ij is the count of species j in commu
 
 \item{params}{S3 class params object, see \code{\link{make_params}}.}
 
-\item{outgens}{Numeric vector of generations for which output is desired.}
-
 \item{output}{Logical, if True outputs progress bar.}
 }
 \value{
-Returns an object of class simrun, list containing four objects:
-Metacommunity: A list containing the metacommunity matrices from generations specified in
-outgens
-Incidence: A list containing presence-absence matrices from generations specified in
-outgens
-Metafreq: A matrix where each column is a species and each row is a generation. Values
+Returns a list containing three objects:
+metacommunity: The simulated metacommunity
+metafreq: A matrix where each column is a species and each row is a generation. Values
 are the frequencies of species summed across the entire metacommunity.
-Comfreq: A list of matrices (one for each community )where each column is a species and
-each row is a generation. Values are the frequencies of the species in that community
-at the start of that generation.
+input: a list containing the starting metacommunity and the starting params object
 }
 \description{
 This functions runs a single metacommunity simulation using an adapted version of
@@ -44,6 +40,11 @@ for each species. For details on the selection matrix, frequency dependence para
 and migration matrices see the links in see also. For details on model algorithm and
 mathematics see Williams et al. (XXXX).
 }
+\section{Functions}{
+\itemize{
+\item \code{moran_deme_r()}: R function that is used if Rcpp is not available
+
+}}
 \examples{
 meta <- rand_meta(N = 5, S = 5, 25)
 xy <- matrix(sample(50, 10, replace = TRUE), ncol = 2)
