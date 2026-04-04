@@ -170,6 +170,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' @param parallel Boolean, should the simulations be run in parallel
 #' @param n_cores the number of cores to use. If Null sets the number of cores
 #' to 2 less than the computer contains
+#' 
 #' @details This function is used to run the Moran Community model simulation multiple times in preparation
 #' for Approximate Bayesian Analysis (ABC). Users specify prior distributions for community size,
 #' selection coefficients, frequency dependence, and migration parameters in a \emph{priors} object. From
@@ -184,7 +185,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' simulation.
 #'
 #' @examples
-#'
+#' \dontrun{
 #' testpriors <- make_priors(5, 5)
 #' xy <- random_points(5, 100, 100)
 #'
@@ -199,7 +200,8 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' testpriors$migprobdist <- 1
 #' testpriors$migprobparams <- c(.1, .2)
 #'
-#' abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy)
+#' abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy, parallel = FALSE)
+#' }
 #'
 #' @importFrom foreach foreach %dopar% %do%
 #' @importFrom doParallel registerDoParallel

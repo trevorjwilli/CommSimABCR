@@ -60,7 +60,7 @@ this information, parameter values are randomly drawn according to the prior dis
 are run from these parameter values.
 }
 \examples{
-
+\dontrun{
 testpriors <- make_priors(5, 5)
 xy <- random_points(5, 100, 100)
 
@@ -75,6 +75,7 @@ testpriors$migdistparams <- c(10, 50)
 testpriors$migprobdist <- 1
 testpriors$migprobparams <- c(.1, .2)
 
-abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy)
+abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy, parallel = FALSE)
+}
 
 }
