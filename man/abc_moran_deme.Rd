@@ -2,22 +2,9 @@
 % Please edit documentation in R/ABC_functions.R
 \name{abc_moran_deme}
 \alias{abc_moran_deme}
-\alias{abc_moran_deme2}
 \title{Run Multiple Moran Community Simulations With Priors.}
 \usage{
 abc_moran_deme(
-  nsims,
-  t,
-  priors,
-  x.max = NULL,
-  y.max = NULL,
-  spatial = NULL,
-  eqpop = FALSE,
-  eqmig = TRUE,
-  outgens = NULL
-)
-
-abc_moran_deme2(
   nsims,
   t,
   priors,
@@ -26,7 +13,6 @@ abc_moran_deme2(
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
-  outgens = NULL,
   parallel = TRUE,
   n_cores = NULL
 )
@@ -48,8 +34,6 @@ each community is randomly given a community size each simulation.}
 
 \item{eqmig}{Logical, if TRUE all species will have the same migration matrix, if FALSE
 each species will recieve it's own migration matrix each simulation according to priors file settings}
-
-\item{outgens}{Integer, vector giving the generations for which metacommunities should be output}
 
 \item{parallel}{Boolean, should the simulations be run in parallel}
 
@@ -75,11 +59,6 @@ selection coefficients, frequency dependence, and migration parameters in a \emp
 this information, parameter values are randomly drawn according to the prior distributions and simulations
 are run from these parameter values.
 }
-\section{Functions}{
-\itemize{
-\item \code{abc_moran_deme2()}: Parallelized version of abc_moran_deme
-
-}}
 \examples{
 
 testpriors <- make_priors(5, 5)

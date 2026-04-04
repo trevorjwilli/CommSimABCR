@@ -18,7 +18,6 @@ Depends: R (>= 4.1.0)
 Imports: 
     bipartite,
     dplyr,
-    ggsci,
     gstat,
     metacom,
     mvtnorm,

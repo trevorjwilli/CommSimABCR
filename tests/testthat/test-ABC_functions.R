@@ -19,19 +19,19 @@ test_that("run_single_sim params are correct", {
                             eqpop = TRUE, eqmig = TRUE, output = TRUE)
   
   # Check that selection coefficient matrix is correct size
-  testthat::expect_equal(dim(NT_test$input$s), c(20, 30))
+  testthat::expect_equal(dim(NT_test$input[[2]]$s), c(20, 30))
   # Check that selection coefficients are all 1
-  testthat::expect_equal(NT_test$input$s, matrix(1, nrow=20, ncol=30))
+  testthat::expect_equal(NT_test$input[[2]]$s, matrix(1, nrow=20, ncol=30))
   # Check that fd vector is right size
-  testthat::expect_length(NT_test$input$fd, 30)
+  testthat::expect_length(NT_test$input[[2]]$fd, 30)
   # Check that fd vector is all 0s
-  testthat::expect_equal(NT_test$input$fd, rep(0, 30))
+  testthat::expect_equal(NT_test$input[[2]]$fd, rep(0, 30))
   # Check that migration matrix list is correct size
-  testthat::expect_length(NT_test$input$mig, 30)
+  testthat::expect_length(NT_test$input[[2]]$mig, 30)
   # Check that all migration matrices are the same
-  testthat::expect_length(unique(NT_test$input$mig), 1)
+  testthat::expect_length(unique(NT_test$input[[2]]$mig), 1)
   # Check that communities all have same size
-  testthat::expect_length(unique(rowSums(NT_test$Metacommunity[[1]])), 1)
+  testthat::expect_length(unique(rowSums(NT_test$metacommunity)), 1)
   
   
   # Make Species sorting priors object
@@ -49,15 +49,15 @@ test_that("run_single_sim params are correct", {
   SS_ndl_priors$migprobparams <- c(0.05, 0.2)
   
   SS_test <- run_single_sim(t=10, priors = SS_ndl_priors,
-                            eqpop = FALSE, eqmig = FALSE, outgens = c(5),
+                            eqpop = FALSE, eqmig = FALSE,
                             output = TRUE)
   
   # Check that selection coefficients are not all 1
-  testthat::expect_false(sum(SS_test$input$s) == sum(matrix(1, nrow=20, ncol=30)))
+  testthat::expect_false(sum(SS_test$input[[2]]$s) == sum(matrix(1, nrow=20, ncol=30)))
   # Check that fd coefficients are 0 or less
-  testthat::expect_equal(all(SS_test$input$fd <= 0), TRUE)
+  testthat::expect_equal(all(SS_test$input[[2]]$fd <= 0), TRUE)
   # Check that all migration matrices are the same
-  testthat::expect_gt(length(unique(SS_test$input$mig)), 1)
+  testthat::expect_gt(length(unique(SS_test$input[[2]]$mig)), 1)
   # Check that communities all have same size
-  testthat::expect_gt(length(unique(rowSums(SS_test$Metacommunity[[1]]))), 1)
+  testthat::expect_gt(length(unique(rowSums(SS_test$metacommunity))), 1)
 })

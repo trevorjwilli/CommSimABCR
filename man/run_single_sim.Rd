@@ -12,7 +12,6 @@ run_single_sim(
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
-  outgens = NULL,
   output = FALSE
 )
 }
@@ -31,8 +30,6 @@ each community is randomly given a community size each simulation.}
 
 \item{eqmig}{Logical, if TRUE all species will have the same migration matrix, if FALSE
 each species will receive it's own migration matrix}
-
-\item{outgens}{Integer, vector giving the generations for which metacommunities should be output}
 
 \item{output}{Logical, if True outputs progress bar.}
 }

@@ -285,6 +285,8 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params) {
   int ncol = x.ncol();
   int J = sum(x);
   
+  List params_out = List::create(x, params);
+  
   NumericMatrix outfreqs(t, ncol);
   
   outfreqs(0, _) = calc_col_freqs(x);
@@ -303,7 +305,7 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params) {
     }
   }
   
-  List L = List::create(Named("Metacommunity") = x, _["metafreq"] = outfreqs);
+  List L = List::create(Named("metacommunity") = x, _["metafreq"] = outfreqs, _["input"] = params_out);
   return L;
 }
 
