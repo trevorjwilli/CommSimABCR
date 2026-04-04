@@ -21,9 +21,145 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculate_species_probs_cpp
+NumericVector calculate_species_probs_cpp(NumericMatrix x, int index, List params);
+RcppExport SEXP _CommSimABC_calculate_species_probs_cpp(SEXP xSEXP, SEXP indexSEXP, SEXP paramsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type index(indexSEXP);
+    Rcpp::traits::input_parameter< List >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_species_probs_cpp(x, index, params));
+    return rcpp_result_gen;
+END_RCPP
+}
+// samp_species_for_birth_cpp
+int samp_species_for_birth_cpp(NumericMatrix x, NumericVector probs);
+RcppExport SEXP _CommSimABC_samp_species_for_birth_cpp(SEXP xSEXP, SEXP probsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type probs(probsSEXP);
+    rcpp_result_gen = Rcpp::wrap(samp_species_for_birth_cpp(x, probs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// samp_com_for_death_cpp
+int samp_com_for_death_cpp(NumericMatrix x, int species_index, int com_index, List params);
+RcppExport SEXP _CommSimABC_samp_com_for_death_cpp(SEXP xSEXP, SEXP species_indexSEXP, SEXP com_indexSEXP, SEXP paramsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type species_index(species_indexSEXP);
+    Rcpp::traits::input_parameter< int >::type com_index(com_indexSEXP);
+    Rcpp::traits::input_parameter< List >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(samp_com_for_death_cpp(x, species_index, com_index, params));
+    return rcpp_result_gen;
+END_RCPP
+}
+// samp_species_for_death_cpp
+int samp_species_for_death_cpp(NumericMatrix x, int com_index);
+RcppExport SEXP _CommSimABC_samp_species_for_death_cpp(SEXP xSEXP, SEXP com_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type com_index(com_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(samp_species_for_death_cpp(x, com_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// update_meta_cpp
+NumericMatrix update_meta_cpp(NumericMatrix x, int com_index, int b_species_index, int d_species_index);
+RcppExport SEXP _CommSimABC_update_meta_cpp(SEXP xSEXP, SEXP com_indexSEXP, SEXP b_species_indexSEXP, SEXP d_species_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type com_index(com_indexSEXP);
+    Rcpp::traits::input_parameter< int >::type b_species_index(b_species_indexSEXP);
+    Rcpp::traits::input_parameter< int >::type d_species_index(d_species_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(update_meta_cpp(x, com_index, b_species_index, d_species_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// birth_death_process_cpp
+NumericMatrix birth_death_process_cpp(NumericMatrix x, Rcpp::List params);
+RcppExport SEXP _CommSimABC_birth_death_process_cpp(SEXP xSEXP, SEXP paramsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(birth_death_process_cpp(x, params));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sample_pos_spec
+int sample_pos_spec(NumericVector x);
+RcppExport SEXP _CommSimABC_sample_pos_spec(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(sample_pos_spec(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// speciate_cpp
+Rcpp::List speciate_cpp(NumericMatrix x, Rcpp::List params, double prop_new, double diff_sd);
+RcppExport SEXP _CommSimABC_speciate_cpp(SEXP xSEXP, SEXP paramsSEXP, SEXP prop_newSEXP, SEXP diff_sdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< double >::type prop_new(prop_newSEXP);
+    Rcpp::traits::input_parameter< double >::type diff_sd(diff_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(speciate_cpp(x, params, prop_new, diff_sd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calc_col_freqs
+NumericVector calc_col_freqs(NumericMatrix x);
+RcppExport SEXP _CommSimABC_calc_col_freqs(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(calc_col_freqs(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// moran_deme_cpp
+Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params);
+RcppExport SEXP _CommSimABC_moran_deme_cpp(SEXP xSEXP, SEXP tSEXP, SEXP paramsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type t(tSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type params(paramsSEXP);
+    rcpp_result_gen = Rcpp::wrap(moran_deme_cpp(x, t, params));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_CommSimABC_samp_com_for_birth_cpp", (DL_FUNC) &_CommSimABC_samp_com_for_birth_cpp, 1},
+    {"_CommSimABC_calculate_species_probs_cpp", (DL_FUNC) &_CommSimABC_calculate_species_probs_cpp, 3},
+    {"_CommSimABC_samp_species_for_birth_cpp", (DL_FUNC) &_CommSimABC_samp_species_for_birth_cpp, 2},
+    {"_CommSimABC_samp_com_for_death_cpp", (DL_FUNC) &_CommSimABC_samp_com_for_death_cpp, 4},
+    {"_CommSimABC_samp_species_for_death_cpp", (DL_FUNC) &_CommSimABC_samp_species_for_death_cpp, 2},
+    {"_CommSimABC_update_meta_cpp", (DL_FUNC) &_CommSimABC_update_meta_cpp, 4},
+    {"_CommSimABC_birth_death_process_cpp", (DL_FUNC) &_CommSimABC_birth_death_process_cpp, 2},
+    {"_CommSimABC_sample_pos_spec", (DL_FUNC) &_CommSimABC_sample_pos_spec, 1},
+    {"_CommSimABC_speciate_cpp", (DL_FUNC) &_CommSimABC_speciate_cpp, 4},
+    {"_CommSimABC_calc_col_freqs", (DL_FUNC) &_CommSimABC_calc_col_freqs, 1},
+    {"_CommSimABC_moran_deme_cpp", (DL_FUNC) &_CommSimABC_moran_deme_cpp, 3},
     {NULL, NULL, 0}
 };
 

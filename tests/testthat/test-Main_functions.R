@@ -30,9 +30,7 @@ test_that("unit tests for calculate coefficient", {
   
   cf <- calculate_species_probs(meta, 2, params)
   expected <- c(0.476443, 0.000000, 0.523557, 0.000000)
-  for(i in 1:length(cf)) {
-    expect_equal(cf[i], expected[i], tolerance = tol)
-  }
+  expect_equal(cf, expected, tolerance = tol)
   
   meta <- create_20_30_meta()
   params <- create_20_30_params()
@@ -41,10 +39,61 @@ test_that("unit tests for calculate coefficient", {
                 0.01701057,0.06683575,0.08273971,0.00000000,0.01462438,0.02825836,0.11000528,0.09154158,0.01342758,
                 0.03252077,0.00000000,0.00000000,0.06208842,0.05059997,0.01722286,0.04249182,0.01307424,0.02939186,
                 0.01556106,0.04097731,0.02885554)
+
+  expect_equal(cf, expected, tolerance = tol)
+})
+
+test_that("unit tests for calculate_species_probs_cpp", {
+  tol = 0.00001
+  meta <- create_balanced_meta()
+  params <- create_params()
   
-  for(i in 1:length(cf)) {
-    expect_equal(cf[i], expected[i], tolerance = tol)
-  }
+  cf <- calculate_species_probs_cpp(meta, 1, params)
+  expected <- c(0.476443, 0.000000, 0.523557, 0.000000)
+  expect_equal(cf, expected, tolerance = tol)
+  
+  meta <- create_20_30_meta()
+  params <- create_20_30_params()
+  cf <- calculate_species_probs_cpp(meta, 6, params)
+  expected <- c(0.00000000,0.00000000,0.01663403,0.00000000,0.06288491,0.03367888,0.00000000,0.08218243,0.04739270,
+                0.01701057,0.06683575,0.08273971,0.00000000,0.01462438,0.02825836,0.11000528,0.09154158,0.01342758,
+                0.03252077,0.00000000,0.00000000,0.06208842,0.05059997,0.01722286,0.04249182,0.01307424,0.02939186,
+                0.01556106,0.04097731,0.02885554)
+  
+  expect_equal(cf, expected, tolerance = tol)
+})
+
+test_that("birth_death_process unit tests", {
+  x <- create_unbalanced_meta()
+  inparam <- create_params()
+  
+  set.seed(42)
+  b_com <- samp_com_for_birth(x)
+  s_probs <- calculate_species_probs(x, b_com, inparam)
+  s_birth <- samp_species_for_birth(x, s_probs)
+  d_com <- samp_com_for_death(x, s_birth, b_com, inparam)
+  s_death <- samp_species_for_death(x, d_com)
+  x <- update_meta(x, d_com, s_birth, s_death)
+  
+  y <- create_unbalanced_meta()
+  
+  set.seed(42)
+  y <- birth_death_process(y, inparam)
+  
+  expect_equal(x, y)
+  
+  z <- create_unbalanced_meta()
+  
+  set.seed(42)
+  b_com <- samp_com_for_birth_cpp(z)
+  s_probs <- calculate_species_probs_cpp(z, b_com, inparam)
+  s_birth <- samp_species_for_birth_cpp(z, s_probs)
+  d_com <- samp_com_for_death_cpp(z, s_birth, b_com, inparam)
+  s_death <- samp_species_for_death_cpp(z, d_com)
+  z <- update_meta_cpp(z, d_com, s_birth, s_death)
+  
+  expect_equal(x, z)
+  
 })
 
 test_that("birth_death_process integration test", {
@@ -127,5 +176,44 @@ test_that("birth_death_process integration test", {
   expect_equal(obs_mig_df$obs_probs, obs_mig_df$exp_probs, tolerance=0.05)
 })
 
+test_that("speciation unit tests", {
+  x <- create_20_30_meta()
+  inparam <- create_20_30_params()
+  
+  x[,4] <- 0
+  x[,27] <- 0
+  
+  new_data <- speciate(x, inparam)
+  
+  expect_true(all(colSums(new_data[[1]]) > 0))
+  expect_equal(rowSums(new_data[[1]]), rowSums(x))
+  expect_equal(sum(new_data[[2]]$s[,4] == inparam$s[,4]), 0)
+  expect_equal(sum(new_data[[2]]$s[,5] == inparam$s[,5]), nrow(x))
+  expect_equal(sum(new_data[[2]]$s[,27] == inparam$s[,27]), 0)
+  expect_equal(sum(new_data[[2]]$fd == inparam$fd), length(inparam$fd) - 2)
+  
+})
 
-
+test_that("speciate_cpp unit tests", {
+  x <- create_20_30_meta()
+  inparam <- create_20_30_params()
+  
+  x[,4] <- 0
+  x[,27] <- 0
+  
+  x2 <- create_20_30_meta()
+  inparam2 <- create_20_30_params()
+  
+  new_data <- speciate_cpp(x, inparam, 0.1, 0.1)
+  expect_true(all(colSums(new_data[[1]]) > 0))
+  expect_equal(sum(new_data[[2]]$s[,4] == inparam2$s[,4]), 0)
+  expect_equal(sum(new_data[[2]]$s[,5] == inparam2$s[,5]), nrow(x2))
+  expect_equal(sum(new_data[[2]]$s[,27] == inparam2$s[,27]), 0)
+  expect_equal(sum(new_data[[2]]$fd == inparam2$fd), length(inparam2$fd) - 2)
+  
+  x2[,4] <- 0
+  x2[,27] <- 0
+  
+  expect_equal(rowSums(new_data[[1]]), rowSums(x2))
+  
+})

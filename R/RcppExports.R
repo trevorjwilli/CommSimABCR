@@ -5,3 +5,43 @@ samp_com_for_birth_cpp <- function(x) {
     .Call(`_CommSimABC_samp_com_for_birth_cpp`, x)
 }
 
+calculate_species_probs_cpp <- function(x, index, params) {
+    .Call(`_CommSimABC_calculate_species_probs_cpp`, x, index, params)
+}
+
+samp_species_for_birth_cpp <- function(x, probs) {
+    .Call(`_CommSimABC_samp_species_for_birth_cpp`, x, probs)
+}
+
+samp_com_for_death_cpp <- function(x, species_index, com_index, params) {
+    .Call(`_CommSimABC_samp_com_for_death_cpp`, x, species_index, com_index, params)
+}
+
+samp_species_for_death_cpp <- function(x, com_index) {
+    .Call(`_CommSimABC_samp_species_for_death_cpp`, x, com_index)
+}
+
+update_meta_cpp <- function(x, com_index, b_species_index, d_species_index) {
+    .Call(`_CommSimABC_update_meta_cpp`, x, com_index, b_species_index, d_species_index)
+}
+
+birth_death_process_cpp <- function(x, params) {
+    .Call(`_CommSimABC_birth_death_process_cpp`, x, params)
+}
+
+sample_pos_spec <- function(x) {
+    .Call(`_CommSimABC_sample_pos_spec`, x)
+}
+
+speciate_cpp <- function(x, params, prop_new, diff_sd) {
+    .Call(`_CommSimABC_speciate_cpp`, x, params, prop_new, diff_sd)
+}
+
+calc_col_freqs <- function(x) {
+    .Call(`_CommSimABC_calc_col_freqs`, x)
+}
+
+moran_deme_cpp <- function(x, t, params) {
+    .Call(`_CommSimABC_moran_deme_cpp`, x, t, params)
+}
+

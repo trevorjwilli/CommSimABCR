@@ -136,6 +136,104 @@ birth_death_process <- function(x, params) {
   x
 }
 
+#' Create new species
+#' 
+#' This function randomly creates new species in a site x species matrix if 
+#' there are species (columns) with community sums equal to 0. 
+#' 
+#' @param x Numeric matrix, species x site matrix
+#' @param params S3 class params object
+#' @param prop_new float, the proportion of the community size that the new species
+#' should have
+#' @param diff_sd float, the standard deviation to use when evolving the selection
+#' coefficients and frequency dependence parameters. These values are evolved by
+#' randomly selecting a number from a normal distribution with mean 0 and standard
+#' deviation per this parameter.
+#' 
+#' @details This function takes a site x species matrix and a params object and 
+#' checks to see if there are any empty species (column) vectors. If there are
+#' it randomly selects a single community (row) and adds individuals into the 
+#' cell of the empty column up to the frequency specified in prop_new. To keep the 
+#' community size the same, individuals are randomly subtracted from other non-zero
+#' species in the community. Additionally, the selection coefficients and frequency
+#' dependence parameters are modified from the extinct species parameters by 
+#' adding values from a normal distribution centered at 0. 
+#'
+#' @return Returns a new site x species matrix with all column sums greater than
+#' zero and a new params object with updated parameters for the new species
+#' 
+#' @export
+
+speciate <- function(x, params, prop_new=0.1, diff_sd=0.1) {
+  # Check that x is a matrix
+  if(!is.matrix(x)) {
+    rlang::abort('x must be an abundance (integer) site x species matrix',
+                 class = 'input_type_error')
+  }
+  
+  # Check that params is a params object
+  if(!is.params(params)) {
+    rlang::abort('Parameter object not of class params, check parameter input',
+                 class = 'input_type_error')
+  }
+  
+  n_coms <- nrow(x)
+  n_spec <- ncol(x)
+  
+  if(any(colSums(x) == 0)) {
+    inds <- which(colSums(x) == 0)
+    
+    for(i in inds) {
+      # Select community for new species
+      com_ind <- sample(n_coms, 1)
+      com_size <- sum(x[com_ind,])
+      n_to_add <- ceiling(com_size*prop_new)
+      n_new <- 0
+      
+      while(n_new < n_to_add) {
+        pos_spec <- which(x[com_ind,] > 1)
+        if(i %in% pos_spec) {
+          pos_spec <- pos_spec[-which(pos_spec == i)]
+        }
+        prob_spec <- x[com_ind,][pos_spec]/sum(x[com_ind,][pos_spec])
+        if(length(pos_spec) == 1) {
+          sel_spec <- pos_spec[1]
+        } else {
+          sel_spec <- sample(pos_spec, 1, prob=prob_spec)
+        }
+        x[com_ind, sel_spec] <- x[com_ind, sel_spec] - 1
+        n_new <- n_new + 1
+      }
+      
+      x[com_ind, i] <- n_new
+      if(sum(x[com_ind,]) != com_size) {
+        rlang::abort("New community size did not match old community size")
+      }
+      
+      # evolve the selection coefficients
+      for(j in 1:nrow(params$s)) {
+        dif <- stats::rnorm(1, 0, diff_sd)
+        params$s[j, i] <- params$s[j, i] + dif
+        if(params$s[j, i] <= 0) {
+          params$s[j, i] <- 0.00000001
+        }
+      }
+      
+      # evolve the frequency dependence parameter
+      dif <- stats::rnorm(1, 0, diff_sd)
+      params$fd[i] <- params$fd[i] + dif
+      if(params$fd[i] > 0) {
+        params$fd[i] <- 0
+      }
+      
+    }
+      
+  }
+  
+  return(list(x, params))
+
+}
+
 #' Run Metacommunity Moran Simulation.
 #'
 #' This functions runs a single metacommunity simulation using an adapted version of
@@ -318,6 +416,80 @@ moran_deme <- function(x, t, params, outgens = NULL, output = TRUE) {
   out
 }
 
+#' @describeIn moran_deme modularized moran_deme version
+
+moran_deme2 <- function(x, t, params, outgens = NULL, output = TRUE) {
+  if(!is.params(params)) {
+    stop('Parameter file not configured correctly')
+  }
+  spp <- attr(params, 'NumSpec') # Calculate number of species
+  
+  coms <- attr(params, 'NumSite') # Calculate number of communities
+  
+  comlist <- list() # make a list for output for each community (this line and next 3 lines)
+  for(i in 1:coms) {
+    comlist[[i]] <- matrix(nrow = t, ncol = spp)
+    comlist[[i]][1,] <- x[i,]/sum(x[i,])
+  }
+  
+  metas <- list() # make a list for output of metacommunity at certain time intervals
+  #metas[["0"]] <- x
+  incs <- list() # make a list for output of presence-absence matrices
+  #incs[["0"]] <- ifelse(x>0, 1, x)
+  
+  J <- sum(x) # Calculate the total number of individuals in metacommunity
+  
+  out.mat <- matrix(nrow = t, ncol = spp) # Initialize the matrix of frequencies to output
+  out.mat[1,] <- apply(x, 2, function(y){sum(y)/J}) # Calculate starting frequencies and add to output
+  
+  #print("Starting Community", quote = F)
+  #print(x)
+  
+  Gen <- 2 # Set index for generations
+  #print(paste("Generation", Gen), quote = F)
+  if(output == T) {
+    pb <- utils::txtProgressBar(min = 0, max = (t-1)*J, style = 3)
+  }
+  
+  for(i in 1:((t-1)*J)){ # Loop through moran model until you have done t generations
+    
+    x <- birth_death_process(x, params)
+    
+    if(i %% sum(x) == 0){ # Check to see if enough iterations have occurred for a generation
+      
+      evol <- speciate(x, params)
+      x <- evol[[1]]
+      params <- evol[[2]]
+      
+      out.mat[Gen, ] <- apply(x, 2, function(y){sum(y)/J}) # Output current frequencies
+      
+      for(j in 1:coms){
+        comlist[[j]][Gen,] <- x[j,]/sum(x[j,])
+      }
+      
+      if(!is.null(outgens)) { # See if you want multiple metacommunity matrices in output
+        if(Gen %in% outgens) { # Test to see if the current generation is to be put in output
+          metas[[as.character(Gen)]] <- x # output matrix
+          incs[[as.character(Gen)]] <- ifelse(x>0, 1, x)
+        }
+      }
+      
+      Gen <- Gen + 1 # Reset generation index
+    }
+    
+    if(output == T) {
+      utils::setTxtProgressBar(pb, i)
+    }
+    
+  }
+  
+  inc <- ifelse(x>0, 1, x)
+  incs[[as.character(t)]] <- inc
+  metas[[as.character(t)]] <- x
+  out <- list(Metacommunity = metas, Incidence = incs, metafreq = out.mat,comfreq = comlist, input = params)
+  class(out) <- c('simrun', 'list')
+  out
+}
 
 #' @export
 

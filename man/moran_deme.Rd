@@ -2,9 +2,12 @@
 % Please edit documentation in R/Main_functions.R
 \name{moran_deme}
 \alias{moran_deme}
+\alias{moran_deme2}
 \title{Run Metacommunity Moran Simulation.}
 \usage{
 moran_deme(x, t, params, outgens = NULL, output = TRUE)
+
+moran_deme2(x, t, params, outgens = NULL, output = TRUE)
 }
 \arguments{
 \item{x}{Numeric matrix, starting metacommunity (species x site) matrix where columns
@@ -44,6 +47,11 @@ for each species. For details on the selection matrix, frequency dependence para
 and migration matrices see the links in see also. For details on model algorithm and
 mathematics see Williams et al. (XXXX).
 }
+\section{Functions}{
+\itemize{
+\item \code{moran_deme2()}: modularized moran_deme version
+
+}}
 \examples{
 meta <- rand_meta(N = 5, S = 5, 25)
 xy <- matrix(sample(50, 10, replace = TRUE), ncol = 2)
