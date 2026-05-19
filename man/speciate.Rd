@@ -4,12 +4,14 @@
 \alias{speciate}
 \title{Create new species}
 \usage{
-speciate(x, params, prop_new = 0.1, diff_sd = 0.1)
+speciate(x, params, change_params = TRUE, prop_new = 0.1, diff_sd = 0.1)
 }
 \arguments{
 \item{x}{Numeric matrix, species x site matrix}
 
 \item{params}{S3 class params object}
+
+\item{change_params}{Bool, if true "evolves" the selection and fd parameters for the newly created species}
 
 \item{prop_new}{float, the proportion of the community size that the new species
 should have}

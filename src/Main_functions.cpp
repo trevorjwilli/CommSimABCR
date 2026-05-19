@@ -194,8 +194,9 @@ int sample_pos_spec(NumericVector x) {
 // [[Rcpp::export]]
 Rcpp::List speciate_cpp(NumericMatrix x,
                   Rcpp::List params,
-                  double prop_new,
-                  double diff_sd) {
+                  bool change_params = true,
+                  double prop_new = 0.1,
+                  double diff_sd = 0.1) {
   int n_coms = x.nrow();
   int n_spec = x.ncol();
   IntegerVector coms(n_coms);
@@ -238,18 +239,20 @@ Rcpp::List speciate_cpp(NumericMatrix x,
       
       x(com_ind[0], i) = n_new;
       
-      for (int j = 0; j < n_coms; j++) {
-        double dif = R::rnorm(0, diff_sd);
-        s(j, i) = s(j, i) + dif;
-        if (s(j, i) <= 0) {
-          s(j, i) = 0.00000001;
+      if (change_params) {
+        for (int j = 0; j < n_coms; j++) {
+          double dif = R::rnorm(0, diff_sd);
+          s(j, i) = s(j, i) + dif;
+          if (s(j, i) <= 0) {
+            s(j, i) = 0.00000001;
+          }
         }
-      }
       
-      double dif_fd = R::rnorm(0, diff_sd);
-      fd[i] = fd[i] + dif_fd;
-      if (fd[i] >= 0.0) {
-        fd[i] = 0.0;
+        double dif_fd = R::rnorm(0, diff_sd);
+        fd[i] = fd[i] + dif_fd;
+        if (fd[i] >= 0.0) {
+          fd[i] = 0.0;
+        }
       }
     }
   }
@@ -263,7 +266,7 @@ Rcpp::List speciate_cpp(NumericMatrix x,
 
 // [[Rcpp::export]]
 NumericVector calc_col_freqs(NumericMatrix x) {
-  int nrow = x.nrow();
+
   int ncol = x.ncol(); 
   double J = sum(x);
   
@@ -279,9 +282,9 @@ NumericVector calc_col_freqs(NumericMatrix x) {
 }
 
 // [[Rcpp::export]]
-Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params) {
+Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params,
+                          bool change_params = true) {
   
-  int nrow = x.nrow();
   int ncol = x.ncol();
   int J = sum(x);
   
@@ -299,7 +302,7 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params) {
     x = birth_death_process_cpp(x, params);
     
     if (i % J == 0) {
-      speciate_cpp(x, params, 0.1, 0.1);
+      speciate_cpp(x, params, change_params, 0.1, 0.1);
       outfreqs(Gen, _) = calc_col_freqs(x);
       Gen += 1;
     }

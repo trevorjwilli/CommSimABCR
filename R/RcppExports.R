@@ -33,15 +33,15 @@ sample_pos_spec <- function(x) {
     .Call(`_CommSimABC_sample_pos_spec`, x)
 }
 
-speciate_cpp <- function(x, params, prop_new, diff_sd) {
-    .Call(`_CommSimABC_speciate_cpp`, x, params, prop_new, diff_sd)
+speciate_cpp <- function(x, params, change_params = TRUE, prop_new = 0.1, diff_sd = 0.1) {
+    .Call(`_CommSimABC_speciate_cpp`, x, params, change_params, prop_new, diff_sd)
 }
 
 calc_col_freqs <- function(x) {
     .Call(`_CommSimABC_calc_col_freqs`, x)
 }
 
-moran_deme_cpp <- function(x, t, params) {
-    .Call(`_CommSimABC_moran_deme_cpp`, x, t, params)
+moran_deme_cpp <- function(x, t, params, change_params = TRUE) {
+    .Call(`_CommSimABC_moran_deme_cpp`, x, t, params, change_params)
 }
 
