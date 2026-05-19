@@ -12,7 +12,8 @@ run_single_sim(
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
-  output = FALSE
+  output = FALSE,
+  change_params = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ each community is randomly given a community size each simulation.}
 each species will receive it's own migration matrix}
 
 \item{output}{Logical, if True outputs progress bar.}
+
+\item{change_params}{Logical, if true speciate function "evolves" the input params file}
 }
 \value{
 simrun object with simulation results

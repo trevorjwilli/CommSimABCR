@@ -13,6 +13,7 @@ abc_moran_deme(
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
+  change_params = TRUE,
   parallel = TRUE,
   n_cores = NULL
 )
@@ -34,6 +35,8 @@ each community is randomly given a community size each simulation.}
 
 \item{eqmig}{Logical, if TRUE all species will have the same migration matrix, if FALSE
 each species will recieve it's own migration matrix each simulation according to priors file settings}
+
+\item{change_params}{Boolean, if true speciate "evolves" the input params object}
 
 \item{parallel}{Boolean, should the simulations be run in parallel}
 

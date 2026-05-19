@@ -170,6 +170,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' @param parallel Boolean, should the simulations be run in parallel
 #' @param n_cores the number of cores to use. If Null sets the number of cores
 #' to 2 less than the computer contains
+#' @param change_params Boolean, if true speciate "evolves" the input params object
 #' 
 #' @details This function is used to run the Moran Community model simulation multiple times in preparation
 #' for Approximate Bayesian Analysis (ABC). Users specify prior distributions for community size,
@@ -210,8 +211,9 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' @export
 
 abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
-                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
-                            parallel = TRUE, n_cores = NULL) {
+                           spatial = NULL, eqpop = FALSE, eqmig = TRUE,
+                           change_params = TRUE,
+                           parallel = TRUE, n_cores = NULL) {
   
   if(parallel) {
     if(is.null(n_cores)) {
@@ -388,6 +390,7 @@ print.priors <- function(x, ...) {
 #' @param eqmig Logical, if TRUE all species will have the same migration matrix, if FALSE
 #' each species will receive it's own migration matrix
 #' @param output Logical, if True outputs progress bar.
+#' @param change_params Logical, if true speciate function "evolves" the input params file
 #'
 #' @return simrun object with simulation results
 #'
@@ -395,7 +398,7 @@ print.priors <- function(x, ...) {
 
 run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
-                           output = FALSE) {
+                           output = FALSE, change_params=TRUE) {
   
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
@@ -478,7 +481,7 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
   inparam$fd <- fd # set fd vector
   inparam$mig <- set_mig(inparam, site.arrange, max.dist, tot)
   
-  run <- moran_deme(x = meta, t = t, params = inparam, output = output) # Run simulation
+  run <- moran_deme(x = meta, t = t, params = inparam, change_params=change_params, output = output) # Run simulation
   run
   
 }

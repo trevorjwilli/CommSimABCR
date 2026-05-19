@@ -143,6 +143,7 @@ birth_death_process <- function(x, params) {
 #' 
 #' @param x Numeric matrix, species x site matrix
 #' @param params S3 class params object
+#' @param change_params Bool, if true "evolves" the selection and fd parameters for the newly created species
 #' @param prop_new float, the proportion of the community size that the new species
 #' should have
 #' @param diff_sd float, the standard deviation to use when evolving the selection
@@ -164,7 +165,7 @@ birth_death_process <- function(x, params) {
 #' 
 #' @export
 
-speciate <- function(x, params, prop_new=0.1, diff_sd=0.1) {
+speciate <- function(x, params, change_params=TRUE, prop_new=0.1, diff_sd=0.1) {
   # Check that x is a matrix
   if(!is.matrix(x)) {
     rlang::abort('x must be an abundance (integer) site x species matrix',
@@ -210,21 +211,24 @@ speciate <- function(x, params, prop_new=0.1, diff_sd=0.1) {
         rlang::abort("New community size did not match old community size")
       }
       
-      # evolve the selection coefficients
-      for(j in 1:nrow(params$s)) {
-        dif <- stats::rnorm(1, 0, diff_sd)
-        params$s[j, i] <- params$s[j, i] + dif
-        if(params$s[j, i] <= 0) {
-          params$s[j, i] <- 0.00000001
+      if(change_params) {
+        # evolve the selection coefficients
+        for(j in 1:nrow(params$s)) {
+          dif <- stats::rnorm(1, 0, diff_sd)
+          params$s[j, i] <- params$s[j, i] + dif
+          if(params$s[j, i] <= 0) {
+            params$s[j, i] <- 0.00000001
+          }
         }
+        
+        # evolve the frequency dependence parameter
+        dif <- stats::rnorm(1, 0, diff_sd)
+        params$fd[i] <- params$fd[i] + dif
+        if(params$fd[i] > 0) {
+          params$fd[i] <- 0
+        }        
       }
-      
-      # evolve the frequency dependence parameter
-      dif <- stats::rnorm(1, 0, diff_sd)
-      params$fd[i] <- params$fd[i] + dif
-      if(params$fd[i] > 0) {
-        params$fd[i] <- 0
-      }
+
       
     }
       
@@ -243,6 +247,8 @@ speciate <- function(x, params, prop_new=0.1, diff_sd=0.1) {
 #' are species, rows are communities and cell ij is the count of species j in community i.
 #' @param t Numeric, number of generations for simulation to run.
 #' @param params S3 class params object, see \code{\link{make_params}}.
+#' @param change_params Logical, if True speciate "evolves" the input params object
+#' if a speciation event happens
 #' @param output Logical, if True outputs progress bar.
 #'
 #' @details Metacommunity simulations in CommSimABC are based upon Moran models with
@@ -280,14 +286,14 @@ speciate <- function(x, params, prop_new=0.1, diff_sd=0.1) {
 #'
 #' @export
 
-moran_deme <- function(x, t, params, output = TRUE) {
+moran_deme <- function(x, t, params, change_params=TRUE, output = TRUE) {
   if (requireNamespace("Rcpp", quietly = TRUE)) {
 
-    out <- moran_deme_cpp(x=x, t=t, params=params)
+    out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params)
     
   } else {
     
-    out <- moran_deme_r(x=x, t=t, params=params, output=output)
+    out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params, output=output)
     
   }
   
@@ -299,7 +305,7 @@ moran_deme <- function(x, t, params, output = TRUE) {
 #' @describeIn moran_deme R function that is used if Rcpp is not available
 #' @export
 
-moran_deme_r <- function(x, t, params, output = TRUE) {
+moran_deme_r <- function(x, t, params, change_params=TRUE, output = TRUE) {
   if(!is.params(params)) {
     stop('Parameter file not configured correctly')
   }
@@ -324,7 +330,7 @@ moran_deme_r <- function(x, t, params, output = TRUE) {
     
     if(i %% sum(x) == 0){ # Check to see if enough iterations have occurred for a generation
       
-      evol <- speciate(x, params)
+      evol <- speciate(x, params, change_params)
       x <- evol[[1]]
       params <- evol[[2]]
       

@@ -5,9 +5,9 @@
 \alias{moran_deme_r}
 \title{Run Metacommunity Moran Simulation.}
 \usage{
-moran_deme(x, t, params, output = TRUE)
+moran_deme(x, t, params, change_params = TRUE, output = TRUE)
 
-moran_deme_r(x, t, params, output = TRUE)
+moran_deme_r(x, t, params, change_params = TRUE, output = TRUE)
 }
 \arguments{
 \item{x}{Numeric matrix, starting metacommunity (species x site) matrix where columns
@@ -16,6 +16,9 @@ are species, rows are communities and cell ij is the count of species j in commu
 \item{t}{Numeric, number of generations for simulation to run.}
 
 \item{params}{S3 class params object, see \code{\link{make_params}}.}
+
+\item{change_params}{Logical, if True speciate "evolves" the input params object
+if a speciation event happens}
 
 \item{output}{Logical, if True outputs progress bar.}
 }
