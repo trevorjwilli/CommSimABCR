@@ -303,26 +303,7 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params,
     x = birth_death_process_cpp(x, params);
     
     if (i % J == 0) {
-      Rcout << "Generation " << Gen << " completed\n";
-      NumericMatrix s = as<NumericMatrix>(params["s"]);
-      
-      double sel_sum = sum(s);
-      double n_item = ncol * nrow;
-      
-      if (sel_sum != n_item) {
-        Rcout << "\n" << s << "\n";
-      };
-    
       speciate_cpp(x, params, change_params, 0.1, 0.1);
-      
-      double sel_sum2 = sum(s);
-      double n_item2 = ncol * nrow;
-      
-      if (sel_sum2 != n_item2) {
-        Rcout << "Speciate changed selection matrix\n";
-        Rcout << "\n" << s << "\n";
-      }
-      
       outfreqs(Gen, _) = calc_col_freqs(x);
       Gen += 1;
     }

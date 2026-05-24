@@ -408,8 +408,6 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
                            output = FALSE, change_params=TRUE) {
   
-  print("Starting run_single_sim")
-  
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
   n.sites <- attr(priors, 'NumSite') # Calculate number of communities
@@ -437,21 +435,11 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
   
   sel <- set_sel_priors(n.spec, n.sites, priors$seldist, priors$selparams[1], priors$selparams[2]) # Create selection matrices for each simulation using set_sel_priors function
   
-  if(sum(sel) != nrow(sel)*ncol(sel)) {
-    print("Initializing selection matrix failed")
-    print(sel)
-  }
-  
   if(priors$fddist == 1) { # Use Normal distribution for frequency dependence parameters
     fd <- stats::runif(n.spec, min = priors$fdparams[1], priors$fdparams[2]) # Make matrix of fd parameters, each row is a simulation each column a species
   }
   else if(priors$fddist == 2) { # Use Normal distribution for frequency dependence parameters
     fd <- stats::rnorm(n.spec, mean = priors$fdparams[1], sd = priors$fdparams[2]) # Make matrix of fd parameters
-  }
-  
-  if(sum(fd) != 0) {
-    print("Initializing frequency dependence failed")
-    print(fd)
   }
   
   if(eqmig == TRUE) {
@@ -501,17 +489,6 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
   inparam$fd <- fd # set fd vector
   inparam$mig <- set_mig(inparam, site.arrange, max.dist, tot)
   
-  if(sum(inparam$s) != nrow(inparam$s)*ncol(inparam$s)) {
-    print("Selection matrix changed when assigning it to parameter object")
-    print(sel)
-  }
-  
-  if(sum(inparam$fd) != 0) {
-    print("Selection matrix changed when assigning it to parameter object")
-    print(sel)
-  }
-  
-  print("Running moran_deme")
   run <- moran_deme(x = meta, t = t, params = inparam, change_params=change_params, output = output) # Run simulation
   run
   
