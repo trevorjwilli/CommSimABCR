@@ -28,6 +28,7 @@ Imports:
     parallel,
     foreach,
     doParallel,
+    doRNG,
     Rcpp
 RoxygenNote: 7.3.3
 RemoteType: local

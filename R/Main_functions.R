@@ -288,11 +288,15 @@ speciate <- function(x, params, change_params=TRUE, prop_new=0.1, diff_sd=0.1) {
 
 moran_deme <- function(x, t, params, change_params=TRUE, output = TRUE) {
   if (requireNamespace("Rcpp", quietly = TRUE)) {
-
+    cat("")
+    cat("Using Rcpp")
+    cat("")
     out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params)
     
   } else {
-    
+    cat("")
+    cat("Using base R")
+    cat("")
     out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params, output=output)
     
   }
