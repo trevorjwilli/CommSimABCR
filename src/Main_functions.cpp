@@ -286,6 +286,7 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params,
                           bool change_params = true) {
   
   int ncol = x.ncol();
+  int nrow = x.nrow();
   int J = sum(x);
   
   List params_out = List::create(x, params);

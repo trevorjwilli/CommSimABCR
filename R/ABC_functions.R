@@ -227,12 +227,19 @@ abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
     
     out <- foreach::foreach(i = 1:nsims,
                             .packages=c('CommSimABC')) %dorng% {
-                                        tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig)
+                                        tmp = run_single_sim(t,
+                                                             priors, 
+                                                             x.max, 
+                                                             y.max, 
+                                                             spatial, 
+                                                             eqpop, 
+                                                             eqmig,
+                                                             change_params=change_params)
                                         tmp
                                       }
   } else {
     out <- foreach::foreach(i = 1:nsims) %do% {
-      tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig)
+      tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig, change_params=change_params)
       tmp
     }
   }
@@ -400,6 +407,7 @@ print.priors <- function(x, ...) {
 run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
                            output = FALSE, change_params=TRUE) {
+  
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
   n.sites <- attr(priors, 'NumSite') # Calculate number of communities
