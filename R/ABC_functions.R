@@ -204,7 +204,8 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' abc_moran_deme(5, 5, testpriors, eqpop = FALSE, spatial = xy, parallel = FALSE)
 #' }
 #'
-#' @importFrom foreach foreach %dopar% %do%
+#' @importFrom foreach foreach %do% %dopar%
+#' @importFrom doRNG %dorng%
 #' @importFrom doParallel registerDoParallel
 #' @importFrom parallel makeCluster stopCluster detectCores
 #' @importFrom Rcpp sourceCpp
@@ -219,13 +220,13 @@ abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
     if(is.null(n_cores)) {
       n_cores <- parallel::detectCores() - 2
     }
-    
+  
     cl <- parallel::makeCluster(n_cores)
     on.exit(parallel::stopCluster(cl))
     doParallel::registerDoParallel(cl)
     
     out <- foreach::foreach(i = 1:nsims,
-                            .packages=c('CommSimABC')) %dopar% {
+                            .packages=c('CommSimABC')) %dorng% {
                                         tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig)
                                         tmp
                                       }
@@ -399,7 +400,6 @@ print.priors <- function(x, ...) {
 run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
                            output = FALSE, change_params=TRUE) {
-  
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
   n.sites <- attr(priors, 'NumSite') # Calculate number of communities
