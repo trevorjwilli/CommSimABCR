@@ -4,7 +4,7 @@
 \alias{speciate}
 \title{Create new species}
 \usage{
-speciate(x, params, change_params = TRUE, prop_new = 0.1, diff_sd = 0.1)
+speciate(x, params, change_params = TRUE, prop_new = 0.05, diff_sd = 0.05)
 }
 \arguments{
 \item{x}{Numeric matrix, species x site matrix}

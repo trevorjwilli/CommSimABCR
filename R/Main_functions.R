@@ -165,7 +165,7 @@ birth_death_process <- function(x, params) {
 #' 
 #' @export
 
-speciate <- function(x, params, change_params=TRUE, prop_new=0.1, diff_sd=0.1) {
+speciate <- function(x, params, change_params=TRUE, prop_new=0.05, diff_sd=0.05) {
   # Check that x is a matrix
   if(!is.matrix(x)) {
     rlang::abort('x must be an abundance (integer) site x species matrix',
@@ -250,6 +250,9 @@ speciate <- function(x, params, change_params=TRUE, prop_new=0.1, diff_sd=0.1) {
 #' @param change_params Logical, if True speciate "evolves" the input params object
 #' if a speciation event happens
 #' @param output Logical, if True outputs progress bar.
+#' @param prop_new Numeric, the proportion of individuals in the community that should be replaced
+#' when speciation occurs
+#' @param diff_sd Numeric, the standard deviation used when "evolving" selection and fd coefficients
 #'
 #' @details Metacommunity simulations in CommSimABC are based upon Moran models with
 #' selection and migration. As input, these simulations require a starting metacommunity,
@@ -286,18 +289,21 @@ speciate <- function(x, params, change_params=TRUE, prop_new=0.1, diff_sd=0.1) {
 #'
 #' @export
 
-moran_deme <- function(x, t, params, change_params=TRUE, output = TRUE) {
+moran_deme <- function(x, t, params, change_params=TRUE,
+                       prop_new = 0.05, diff_sd = 0.05, output = TRUE) {
   if (requireNamespace("Rcpp", quietly = TRUE)) {
     cat("")
     cat("Using Rcpp")
     cat("")
-    out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params)
+    out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params,
+                          prop_new=prop_new, diff_sd=diff_sd)
     
   } else {
     cat("")
     cat("Using base R")
     cat("")
-    out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params, output=output)
+    out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params,
+                        prop_new=prop_new, diff_sd=diff_sd, output=output)
     
   }
   
@@ -309,7 +315,8 @@ moran_deme <- function(x, t, params, change_params=TRUE, output = TRUE) {
 #' @describeIn moran_deme R function that is used if Rcpp is not available
 #' @export
 
-moran_deme_r <- function(x, t, params, change_params=TRUE, output = TRUE) {
+moran_deme_r <- function(x, t, params, change_params=TRUE,
+                         prop_new = 0.05, diff_sd = 0.05, output = TRUE) {
   if(!is.params(params)) {
     stop('Parameter file not configured correctly')
   }
@@ -334,7 +341,7 @@ moran_deme_r <- function(x, t, params, change_params=TRUE, output = TRUE) {
     
     if(i %% sum(x) == 0){ # Check to see if enough iterations have occurred for a generation
       
-      evol <- speciate(x, params, change_params)
+      evol <- speciate(x, params, change_params, prop_new, diff_sd)
       x <- evol[[1]]
       params <- evol[[2]]
       
