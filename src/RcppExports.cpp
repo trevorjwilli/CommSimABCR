@@ -136,8 +136,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // moran_deme_cpp
-Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params, bool change_params);
-RcppExport SEXP _CommSimABC_moran_deme_cpp(SEXP xSEXP, SEXP tSEXP, SEXP paramsSEXP, SEXP change_paramsSEXP) {
+Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params, bool change_params, double prop_new, double diff_sd);
+RcppExport SEXP _CommSimABC_moran_deme_cpp(SEXP xSEXP, SEXP tSEXP, SEXP paramsSEXP, SEXP change_paramsSEXP, SEXP prop_newSEXP, SEXP diff_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -145,7 +145,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type t(tSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< bool >::type change_params(change_paramsSEXP);
-    rcpp_result_gen = Rcpp::wrap(moran_deme_cpp(x, t, params, change_params));
+    Rcpp::traits::input_parameter< double >::type prop_new(prop_newSEXP);
+    Rcpp::traits::input_parameter< double >::type diff_sd(diff_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(moran_deme_cpp(x, t, params, change_params, prop_new, diff_sd));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -161,7 +163,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_CommSimABC_sample_pos_spec", (DL_FUNC) &_CommSimABC_sample_pos_spec, 1},
     {"_CommSimABC_speciate_cpp", (DL_FUNC) &_CommSimABC_speciate_cpp, 5},
     {"_CommSimABC_calc_col_freqs", (DL_FUNC) &_CommSimABC_calc_col_freqs, 1},
-    {"_CommSimABC_moran_deme_cpp", (DL_FUNC) &_CommSimABC_moran_deme_cpp, 4},
+    {"_CommSimABC_moran_deme_cpp", (DL_FUNC) &_CommSimABC_moran_deme_cpp, 6},
     {NULL, NULL, 0}
 };
 

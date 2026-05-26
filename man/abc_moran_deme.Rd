@@ -14,6 +14,8 @@ abc_moran_deme(
   eqpop = FALSE,
   eqmig = TRUE,
   change_params = TRUE,
+  prop_new = 0.05,
+  diff_sd = 0.05,
   parallel = TRUE,
   n_cores = NULL
 )
@@ -37,6 +39,11 @@ each community is randomly given a community size each simulation.}
 each species will recieve it's own migration matrix each simulation according to priors file settings}
 
 \item{change_params}{Boolean, if true speciate "evolves" the input params object}
+
+\item{prop_new}{Numeric, the proportion of individuals in the community that should be replaced
+when speciation occurs}
+
+\item{diff_sd}{Numeric, the standard deviation used when "evolving" selection and fd coefficients}
 
 \item{parallel}{Boolean, should the simulations be run in parallel}
 

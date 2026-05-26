@@ -5,9 +5,25 @@
 \alias{moran_deme_r}
 \title{Run Metacommunity Moran Simulation.}
 \usage{
-moran_deme(x, t, params, change_params = TRUE, output = TRUE)
+moran_deme(
+  x,
+  t,
+  params,
+  change_params = TRUE,
+  prop_new = 0.05,
+  diff_sd = 0.05,
+  output = TRUE
+)
 
-moran_deme_r(x, t, params, change_params = TRUE, output = TRUE)
+moran_deme_r(
+  x,
+  t,
+  params,
+  change_params = TRUE,
+  prop_new = 0.05,
+  diff_sd = 0.05,
+  output = TRUE
+)
 }
 \arguments{
 \item{x}{Numeric matrix, starting metacommunity (species x site) matrix where columns
@@ -19,6 +35,11 @@ are species, rows are communities and cell ij is the count of species j in commu
 
 \item{change_params}{Logical, if True speciate "evolves" the input params object
 if a speciation event happens}
+
+\item{prop_new}{Numeric, the proportion of individuals in the community that should be replaced
+when speciation occurs}
+
+\item{diff_sd}{Numeric, the standard deviation used when "evolving" selection and fd coefficients}
 
 \item{output}{Logical, if True outputs progress bar.}
 }

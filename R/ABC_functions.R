@@ -171,6 +171,9 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 #' @param n_cores the number of cores to use. If Null sets the number of cores
 #' to 2 less than the computer contains
 #' @param change_params Boolean, if true speciate "evolves" the input params object
+#' @param prop_new Numeric, the proportion of individuals in the community that should be replaced
+#' when speciation occurs
+#' @param diff_sd Numeric, the standard deviation used when "evolving" selection and fd coefficients
 #' 
 #' @details This function is used to run the Moran Community model simulation multiple times in preparation
 #' for Approximate Bayesian Analysis (ABC). Users specify prior distributions for community size,
@@ -213,7 +216,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 
 abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
-                           change_params = TRUE,
+                           change_params = TRUE, prop_new = 0.05, diff_sd = 0.05,
                            parallel = TRUE, n_cores = NULL) {
   
   if(parallel) {
@@ -234,12 +237,17 @@ abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
                                                              spatial, 
                                                              eqpop, 
                                                              eqmig,
-                                                             change_params=change_params)
+                                                             change_params=change_params,
+                                                             prop_new=prop_new,
+                                                             diff_sd=diff_sd
+                                                             )
                                         tmp
                                       }
   } else {
     out <- foreach::foreach(i = 1:nsims) %do% {
-      tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig, change_params=change_params)
+      tmp = run_single_sim(t, priors, x.max, y.max, spatial, eqpop, eqmig,
+                           change_params=change_params, prop_new=prop_new,
+                           diff_sd=diff_sd)
       tmp
     }
   }
@@ -399,6 +407,9 @@ print.priors <- function(x, ...) {
 #' each species will receive it's own migration matrix
 #' @param output Logical, if True outputs progress bar.
 #' @param change_params Logical, if true speciate function "evolves" the input params file
+#' @param prop_new Numeric, the proportion of individuals in the community that should be replaced
+#' when speciation occurs
+#' @param diff_sd Numeric, the standard deviation used when "evolving" selection and fd coefficients
 #'
 #' @return simrun object with simulation results
 #'
@@ -406,7 +417,8 @@ print.priors <- function(x, ...) {
 
 run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
-                           output = FALSE, change_params=TRUE) {
+                           output = FALSE, change_params=TRUE,
+                           prop_new = 0.05, diff_sd = 0.05) {
   
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
@@ -489,7 +501,8 @@ run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
   inparam$fd <- fd # set fd vector
   inparam$mig <- set_mig(inparam, site.arrange, max.dist, tot)
   
-  run <- moran_deme(x = meta, t = t, params = inparam, change_params=change_params, output = output) # Run simulation
+  run <- moran_deme(x = meta, t = t, params = inparam, change_params=change_params,
+                    prop_new=prop_new, diff_sd=diff_sd, output = output) # Run simulation
   run
   
 }

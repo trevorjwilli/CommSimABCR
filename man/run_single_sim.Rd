@@ -13,7 +13,9 @@ run_single_sim(
   eqpop = FALSE,
   eqmig = TRUE,
   output = FALSE,
-  change_params = TRUE
+  change_params = TRUE,
+  prop_new = 0.05,
+  diff_sd = 0.05
 )
 }
 \arguments{
@@ -35,6 +37,11 @@ each species will receive it's own migration matrix}
 \item{output}{Logical, if True outputs progress bar.}
 
 \item{change_params}{Logical, if true speciate function "evolves" the input params file}
+
+\item{prop_new}{Numeric, the proportion of individuals in the community that should be replaced
+when speciation occurs}
+
+\item{diff_sd}{Numeric, the standard deviation used when "evolving" selection and fd coefficients}
 }
 \value{
 simrun object with simulation results
