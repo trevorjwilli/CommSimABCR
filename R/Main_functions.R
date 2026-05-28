@@ -341,7 +341,7 @@ moran_deme_r <- function(x, t, params, change_params=TRUE,
     
     if(i %% sum(x) == 0){ # Check to see if enough iterations have occurred for a generation
       
-      evol <- speciate(x, params, change_params, prop_new, diff_sd)
+      # evol <- speciate(x, params, change_params, prop_new, diff_sd)
       x <- evol[[1]]
       params <- evol[[2]]
       
