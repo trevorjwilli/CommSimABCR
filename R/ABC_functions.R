@@ -216,7 +216,7 @@ set_sel_priors <- function(n.spec, n.sites, distr, input1, input2) {
 
 abc_moran_deme <- function(nsims, t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
-                           change_params = TRUE, prop_new = 0.05, diff_sd = 0.05,
+                           change_params = TRUE, prop_new = 0.01, diff_sd = 0.05,
                            parallel = TRUE, n_cores = NULL) {
   
   if(parallel) {
@@ -418,7 +418,7 @@ print.priors <- function(x, ...) {
 run_single_sim <- function(t, priors, x.max = 100, y.max = 100,
                            spatial = NULL, eqpop = FALSE, eqmig = TRUE,
                            output = FALSE, change_params=TRUE,
-                           prop_new = 0.05, diff_sd = 0.05) {
+                           prop_new = 0.01, diff_sd = 0.05) {
   
   n.spec <- attr(priors, 'NumSpec') # Calculate number of species
   
