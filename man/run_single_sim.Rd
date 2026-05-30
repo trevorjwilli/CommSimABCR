@@ -13,8 +13,8 @@ run_single_sim(
   eqpop = FALSE,
   eqmig = TRUE,
   output = FALSE,
-  change_params = TRUE,
-  prop_new = 0.05,
+  change_params = FALSE,
+  prop_new = 0,
   diff_sd = 0.05
 )
 }

@@ -183,7 +183,7 @@ test_that("speciation unit tests", {
   x[,4] <- 0
   x[,27] <- 0
   
-  new_data <- speciate(x, inparam)
+  new_data <- speciate(x, inparam, change_params = TRUE, prop_new = 0.01)
   
   expect_true(all(colSums(new_data[[1]]) > 0))
   expect_equal(rowSums(new_data[[1]]), rowSums(x))
@@ -201,7 +201,7 @@ test_that("speciation does not update params", {
   x[,4] <- 0
   x[,27] <- 0
   
-  new_data <- speciate(x, inparam, FALSE)
+  new_data <- speciate(x, inparam, FALSE, prop_new=0.01)
   
   expect_true(all(colSums(new_data[[1]]) > 0))
   expect_equal(rowSums(new_data[[1]]), rowSums(x))
@@ -222,7 +222,7 @@ test_that("speciate_cpp unit tests", {
   x2 <- create_20_30_meta()
   inparam2 <- create_20_30_params()
   
-  new_data <- speciate_cpp(x, inparam, TRUE, 0.1, 0.1)
+  new_data <- speciate_cpp(x, inparam, TRUE, 0.01, 0.1)
   expect_true(all(colSums(new_data[[1]]) > 0))
   expect_equal(sum(new_data[[2]]$s[,4] == inparam2$s[,4]), 0)
   expect_equal(sum(new_data[[2]]$s[,5] == inparam2$s[,5]), nrow(x2))
@@ -246,7 +246,7 @@ test_that("speciate_cpp params do not change", {
   x2 <- create_20_30_meta()
   inparam2 <- create_20_30_params()
   
-  new_data <- speciate_cpp(x, inparam, FALSE, 0.1, 0.1)
+  new_data <- speciate_cpp(x, inparam, FALSE, 0.01, 0.1)
   expect_true(all(colSums(new_data[[1]]) > 0))
   expect_equal(sum(new_data[[2]]$s[,4] == inparam2$s[,4]), nrow(x2))
   expect_equal(sum(new_data[[2]]$s[,5] == inparam2$s[,5]), nrow(x2))

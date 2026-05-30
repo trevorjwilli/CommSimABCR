@@ -165,7 +165,7 @@ birth_death_process <- function(x, params) {
 #' 
 #' @export
 
-speciate <- function(x, params, change_params=TRUE, prop_new=0.01, diff_sd=0.05) {
+speciate <- function(x, params, change_params=FALSE, prop_new=0.0, diff_sd=0.05) {
   # Check that x is a matrix
   if(!is.matrix(x)) {
     rlang::abort('x must be an abundance (integer) site x species matrix',
@@ -289,8 +289,8 @@ speciate <- function(x, params, change_params=TRUE, prop_new=0.01, diff_sd=0.05)
 #'
 #' @export
 
-moran_deme <- function(x, t, params, change_params=TRUE,
-                       prop_new = 0.01, diff_sd = 0.05, output = TRUE) {
+moran_deme <- function(x, t, params, change_params=FALSE,
+                       prop_new = 0.0, diff_sd = 0.05, output = TRUE) {
   if (requireNamespace("Rcpp", quietly = TRUE)) {
     cat("")
     cat("Using Rcpp")
@@ -315,8 +315,8 @@ moran_deme <- function(x, t, params, change_params=TRUE,
 #' @describeIn moran_deme R function that is used if Rcpp is not available
 #' @export
 
-moran_deme_r <- function(x, t, params, change_params=TRUE,
-                         prop_new = 0.01, diff_sd = 0.05, output = TRUE) {
+moran_deme_r <- function(x, t, params, change_params=FALSE,
+                         prop_new = 0.0, diff_sd = 0.05, output = TRUE) {
   if(!is.params(params)) {
     stop('Parameter file not configured correctly')
   }

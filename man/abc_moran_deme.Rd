@@ -13,8 +13,8 @@ abc_moran_deme(
   spatial = NULL,
   eqpop = FALSE,
   eqmig = TRUE,
-  change_params = TRUE,
-  prop_new = 0.05,
+  change_params = FALSE,
+  prop_new = 0,
   diff_sd = 0.05,
   parallel = TRUE,
   n_cores = NULL
