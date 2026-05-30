@@ -305,7 +305,7 @@ Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params,
     x = birth_death_process_cpp(x, params);
     
     if (i % J == 0) {
-      speciate_cpp(x, params, change_params, prop_new, diff_sd);
+      //speciate_cpp(x, params, change_params, prop_new, diff_sd);
       outfreqs(Gen, _) = calc_col_freqs(x);
       Gen += 1;
     }
