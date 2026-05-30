@@ -194,8 +194,8 @@ int sample_pos_spec(NumericVector x) {
 // [[Rcpp::export]]
 Rcpp::List speciate_cpp(NumericMatrix x,
                   Rcpp::List params,
-                  bool change_params = true,
-                  double prop_new = 0.01,
+                  bool change_params = false,
+                  double prop_new = 0.00,
                   double diff_sd = 0.05) {
   int n_coms = x.nrow();
   int n_spec = x.ncol();
@@ -283,8 +283,8 @@ NumericVector calc_col_freqs(NumericMatrix x) {
 
 // [[Rcpp::export]]
 Rcpp::List moran_deme_cpp(NumericMatrix x, int t, Rcpp::List params,
-                          bool change_params = true,
-                          double prop_new = 0.01,
+                          bool change_params = false,
+                          double prop_new = 0.0,
                           double diff_sd = 0.05) {
   
   int ncol = x.ncol();

@@ -9,8 +9,8 @@ moran_deme(
   x,
   t,
   params,
-  change_params = TRUE,
-  prop_new = 0.05,
+  change_params = FALSE,
+  prop_new = 0,
   diff_sd = 0.05,
   output = TRUE
 )
@@ -19,8 +19,8 @@ moran_deme_r(
   x,
   t,
   params,
-  change_params = TRUE,
-  prop_new = 0.05,
+  change_params = FALSE,
+  prop_new = 0,
   diff_sd = 0.05,
   output = TRUE
 )
