@@ -303,9 +303,9 @@ moran_deme <- function(x, t, params, change_params=FALSE,
   #   
   # }
   
-  cat("Using bas R\n")
+  cat("Using base R\n")
   out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params,
-                      prop_new=prop_new, diff_sd=diff_sd, output_output)
+                      prop_new=prop_new, diff_sd=diff_sd, output=output)
   
   out
   
