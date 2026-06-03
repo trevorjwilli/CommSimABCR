@@ -107,15 +107,15 @@ test_that("birth_death_process integration test", {
   species_death <- c()
   
   for(i in 1:1000) {
-    b_com <- samp_com_for_birth(x)
-    birth_com[i] <- b_com
-    s_probs <- calculate_species_probs(x, b_com, inparam)
-    s_birth <- samp_species_for_birth(x, s_probs)
-    species_birth[i] <- s_birth
-    d_com <- samp_com_for_death(x, s_birth, b_com, inparam)
-    death_com[i] <- d_com
-    s_death <- samp_species_for_death(x, d_com)
-    species_death[i] <- s_death
+    b_com <- samp_com_for_birth_cpp(x)
+    birth_com[i] <- b_com + 1
+    s_probs <- calculate_species_probs_cpp(x, b_com, inparam)
+    s_birth <- samp_species_for_birth_cpp(x, s_probs)
+    species_birth[i] <- s_birth + 1
+    d_com <- samp_com_for_death_cpp(x, s_birth, b_com, inparam)
+    death_com[i] <- d_com + 1
+    s_death <- samp_species_for_death_cpp(x, d_com)
+    species_death[i] <- s_death + 1
   }
   
   df <- data.frame(birth_com, species_birth, death_com, species_death)
@@ -125,9 +125,9 @@ test_that("birth_death_process integration test", {
   
   expect_equal(obs_birth_probs, exp_birth_probs, tolerance = 0.08)
   
-  c1_s_probs <- calculate_species_probs(x, 1, inparam)
-  c2_s_probs <- calculate_species_probs(x, 2, inparam)
-  c3_s_probs <- calculate_species_probs(x, 3, inparam)
+  c1_s_probs <- calculate_species_probs_cpp(x, 0, inparam)
+  c2_s_probs <- calculate_species_probs_cpp(x, 1, inparam)
+  c3_s_probs <- calculate_species_probs_cpp(x, 2, inparam)
   
   s_probs_test <- df |>
     dplyr::group_by(birth_com, species_birth) |>
@@ -252,4 +252,19 @@ test_that("speciate_cpp params do not change", {
   expect_equal(sum(new_data[[2]]$s[,5] == inparam2$s[,5]), nrow(x2))
   expect_equal(sum(new_data[[2]]$s[,27] == inparam2$s[,27]), nrow(x2))
   expect_equal(sum(new_data[[2]]$fd == inparam2$fd), length(inparam2$fd))  
+})
+
+
+test_that("moran_deme unit tests", {
+  x <- create_unbalanced_meta()
+  inparam <- create_params()
+  
+  set.seed(352)
+  y <- moran_deme(x, 1, inparam)
+  
+  expect_true(all(rowSums(x) == rowSums(y$metacommunity)))
+  expect_false(sum(colSums(x) == colSums(y$metacommunity)) == ncol(x))
+  expect_true(all(inparam$s == y$input[[2]]$s))
+  expect_true(all(inparam$fd == y$input[[2]]$fd))
+  expect_true(all(inparam$mig[[1]] == y$input[[2]]$mig[[1]]))
 })
