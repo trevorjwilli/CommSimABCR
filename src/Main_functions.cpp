@@ -197,6 +197,7 @@ Rcpp::List speciate_cpp(NumericMatrix x,
                   bool change_params = false,
                   double prop_new = 0.00,
                   double diff_sd = 0.05) {
+
   int n_coms = x.nrow();
   int n_spec = x.ncol();
   IntegerVector coms(n_coms);
@@ -220,6 +221,7 @@ Rcpp::List speciate_cpp(NumericMatrix x,
   
   for (int i = 0; i < n_spec; i++) {
     if (colsums[i] == 0) {
+      Rcout << "Conducting Speciation for species " << i+1 << "\n"; 
       IntegerVector com_ind = Rcpp::sample(coms, 1, false);
 
       double com_size = 0.0;
@@ -240,6 +242,7 @@ Rcpp::List speciate_cpp(NumericMatrix x,
       x(com_ind[0], i) = n_new;
       
       if (change_params) {
+        Rcout << "Evolving Selection and fd coefficients\n";
         for (int j = 0; j < n_coms; j++) {
           double dif = R::rnorm(0, diff_sd);
           s(j, i) = s(j, i) + dif;
@@ -256,6 +259,8 @@ Rcpp::List speciate_cpp(NumericMatrix x,
       }
     }
   }
+  
+
   
   List Lparams = List::create(Named("s") = s , _["fd"] = fd, _["mig"] = migmats);
   List L = List::create(x, Lparams);
