@@ -291,21 +291,17 @@ speciate <- function(x, params, change_params=FALSE, prop_new=0.0, diff_sd=0.05)
 
 moran_deme <- function(x, t, params, change_params=FALSE,
                        prop_new = 0.0, diff_sd = 0.05, output = TRUE) {
-  # if (requireNamespace("Rcpp", quietly = TRUE)) {
-  #   cat("Using Rcpp\n")
-  #   out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params,
-  #                         prop_new=prop_new, diff_sd=diff_sd)
-  #   
-  # } else {
-  #   cat("Using base R\n")
-  #   out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params,
-  #                       prop_new=prop_new, diff_sd=diff_sd, output=output)
-  #   
-  # }
-  
-  cat("Using base R\n")
-  out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params,
-                      prop_new=prop_new, diff_sd=diff_sd, output=output)
+  if (requireNamespace("Rcpp", quietly = TRUE)) {
+    cat("Using Rcpp\n")
+    out <- moran_deme_cpp(x=x, t=t, params=params, change_params=change_params,
+                          prop_new=prop_new, diff_sd=diff_sd)
+
+  } else {
+    cat("Using base R\n")
+    out <- moran_deme_r(x=x, t=t, params=params, change_params=change_params,
+                        prop_new=prop_new, diff_sd=diff_sd, output=output)
+
+  }
   
   out
   
@@ -341,9 +337,9 @@ moran_deme_r <- function(x, t, params, change_params=FALSE,
     
     if(i %% sum(x) == 0){ # Check to see if enough iterations have occurred for a generation
       
-      # evol <- speciate(x, params, change_params, prop_new, diff_sd)
-      # x <- evol[[1]]
-      # params <- evol[[2]]
+      evol <- speciate(x, params, change_params, prop_new, diff_sd)
+      x <- evol[[1]]
+      params <- evol[[2]]
       
       out.mat[Gen, ] <- apply(x, 2, function(y){sum(y)/J}) # Output current frequencies
       
