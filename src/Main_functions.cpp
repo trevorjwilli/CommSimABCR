@@ -231,6 +231,8 @@ Rcpp::List speciate_cpp(NumericMatrix x,
       }
       
       int n_to_add = std::ceil(prop_new*com_size);
+      Rcout << "N new species added: " << n_to_add;
+      
       int n_new = 0;
       
       while (n_new < n_to_add) {
